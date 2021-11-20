@@ -10,3 +10,5 @@ server.use("/api/v1", routerV1)
 server.listen(80, () => {
   console.log("Listening on port *:80")
 })
+
+module.exports = server;
