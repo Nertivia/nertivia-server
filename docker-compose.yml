@@ -4,9 +4,9 @@ services:
         build: .
         restart: unless-stopped
         depends_on:
-            - cassandra
+            - postgres
         links:
-            - cassandra
+            - postgres
         networks:
             - backend
         env_file:
@@ -15,17 +15,17 @@ services:
             - '80'
         ports:
             - '80:80'
-    cassandra:
-        image: scylladb/scylla
+    postgres:
+        image: postgres:14.1
         restart: always
         ports:
             # <Port exposed> : < Port inside container>
-            - '7000:7000'
+            - '5433:5432'
         expose:
-            # Opens port 3306 on the container
-            - '7000'
+            # Opens port 5433 on the container
+            - '5433'
         volumes:
-            - ./data/cassandra:/var/lib/cassandra
+            - database-data:/var/lib/postgresql/data/
         env_file: 
             - .env
         networks:
@@ -40,3 +40,6 @@ services:
 networks:
     backend:
         driver: bridge
+
+volumes:
+  database-data:
