@@ -4,7 +4,7 @@ import { createAccount } from "./createAccount";
 const router = Router();
 
 
-router.get("/create", createAccount);
+router.post("/create", createAccount);
 
 
 export default router;

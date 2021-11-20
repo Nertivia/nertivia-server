@@ -1,9 +1,12 @@
 import express from 'express';
 import { router as routerV1 } from "./v1/app";
 
-
+import './env';
 
 const server = express();
+
+server.use(express.urlencoded({extended: true})); 
+server.use(express.json());
 
 server.use("/api/v1", routerV1)
 server.use("/api", routerV1) // Use the latest api version as the default
