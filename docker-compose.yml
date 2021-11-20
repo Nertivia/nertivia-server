@@ -16,7 +16,7 @@ services:
         ports:
             - '80:80'
     cassandra:
-        image: cassandra:4.0.1
+        image: scylladb/scylla
         restart: always
         ports:
             # <Port exposed> : < Port inside container>
