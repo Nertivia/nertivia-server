@@ -13,7 +13,7 @@ Creating Nertivia server from scratch. The current version is here: <https://git
 
 ### Plain Docker (Best for development)
 
-Step 4,5 and 5,6 can be skipped if you are already running your own redis and cassandra server elsewhere or already running it.
+Step 4,5 and 5,6 can be skipped if you are already running your Redis and Cassandra server elsewhere or already running it.
 
 1. Fork the repo
 2. Clone the forked github repo using `git clone`
