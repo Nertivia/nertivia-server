@@ -1,9 +1,10 @@
 module.exports = function() {
     describe('Create Account', () => {
-		describe(`GET /api/${apiVersion}/users/create`, function() {
+		describe(`POST /api/${apiVersion}/users/create`, function() {
 			it('creates a user', function(done) {
+				global.email = Math.random() + "@test.com"
 			  request.post(`/api/${apiVersion}/users/create`)
-				.send({email: 'test@test.com', username: "test", password: "test123"})
+				.send({email: global.email, username: "test", password: "test123"})
 				.expect(200)
 				.end(function(err, res) {
 				  done(err);

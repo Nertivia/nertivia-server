@@ -1,7 +1,7 @@
 import database from "../../database/database";
 import { User } from "../interface/User";
 import FlakeId from "@brecert/flakeid";
-import { hash } from "bcrypt";
+import bcrypt from "bcrypt";
 
 const flake = new FlakeId({
   mid: 42,
@@ -13,27 +13,40 @@ interface CreateUser {
   username: string;
   password: string;
 }
+type returnType = Promise<[any, string | null, number | null]>;
 class UserDao {
   // Creates an account and then returns the id.
-  public async createUser(details: CreateUser) {
-    const hashPassword = await hash(details.password, 10);
+  public async createUser(details: CreateUser): returnType {
+    const hashPassword = await bcrypt.hash(details.password, 10);
     const id = flake.gen().toString();
-    return database<User>("users")
-      .insert({
-        id,
-        email: details.email,
-        username: details.username,
-        password: hashPassword,
-      })
-      .returning("id")
-      .then(([id]) => [id as string, null])
-      .catch((err) => {
-        if (err.code === "23505") {
-          return [null, "Email already exists!"];
-        }
-        console.log(err);
-        return [null, "Error inserting user into database."];
-      });
+    try {
+      const createdIds = await database<User>("users")
+        .insert({
+          id,
+          email: details.email,
+          username: details.username,
+          password: hashPassword,
+        })
+        .returning("id")
+      return [createdIds[0], null, null];
+    } catch (err: any) {
+      if (err.code === "23505") {
+        return [null, "Email already exists!", 403];
+      }
+      console.log(err);
+      return [null, "Error inserting user into database.", 403];
+    }
+  }
+  // Check if email and password are correct using bcrypt.
+  public async authenticateUser(email: string, password: string): returnType {
+    const user = await database<User>("users")
+      .where({ email })
+      .select("password", "id")
+      .first();
+    if (!user) return [null, "Invalid Email.", 404];
+    const verifyPassword = bcrypt.compare(password, user.password);
+    if (!verifyPassword) return [null, "Invalid password.", 403];
+    return [user.id, null, null];
   }
 }
 
