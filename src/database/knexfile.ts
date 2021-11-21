@@ -4,9 +4,9 @@ import { Knex } from "knex";
 const config: Knex.Config = {
     client: 'postgresql',
     connection: {
-      database: env.DB_NAME,
-      user:     env.DB_USER,
-      password: env.DB_PASSWORD
+      database: env.POSTGRES_NAME,
+      user:     env.POSTGRES_USER,
+      password: env.POSTGRES_PASSWORD
     },
     pool: {
       min: 2,
