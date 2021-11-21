@@ -1,7 +1,8 @@
 import database from "../../database/database";
-import { User } from "../interface/User";
+import { DBUser } from "../interface/User";
 import FlakeId from "@brecert/flakeid";
 import bcrypt from "bcrypt";
+import { randomLetterNumber } from "../utils/random";
 
 const flake = new FlakeId({
   mid: 42,
@@ -20,12 +21,14 @@ class UserDao {
     const hashPassword = await bcrypt.hash(details.password, 10);
     const id = flake.gen().toString();
     try {
-      const createdIds = await database<User>("users")
+      const createdIds = await database<DBUser>("users")
         .insert({
           id,
           email: details.email,
+          discriminator: randomLetterNumber(4),
           username: details.username,
           password: hashPassword,
+          password_version: 0
         })
         .returning("id")
       return [createdIds[0], null, null];
@@ -39,7 +42,7 @@ class UserDao {
   }
   // Check if email and password are correct using bcrypt.
   public async authenticateUser(email: string, password: string): returnType {
-    const user = await database<User>("users")
+    const user = await database<DBUser>("users")
       .where({ email })
       .select("password", "id")
       .first();
