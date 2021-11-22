@@ -3,7 +3,7 @@ const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 export function randomLetterNumber(length: number) {
   let result = '';
   const charactersLength = characters.length;
-  for ( var i = 0; i < length; i++ ) {
+  for ( let i = 0; i < length; i++ ) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;

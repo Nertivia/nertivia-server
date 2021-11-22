@@ -1,0 +1,30 @@
+{
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"plugins": [
+	  "@typescript-eslint"
+	],
+	"extends": [
+	  "eslint:recommended",
+	  "plugin:@typescript-eslint/eslint-recommended",
+	  "plugin:@typescript-eslint/recommended"
+	],
+	"rules": {
+		"no-unused-vars": "off",
+  		"@typescript-eslint/no-unused-vars": ["error"],
+		"max-len": [
+			"warn",
+			{
+			  "code": 100,
+			  "tabWidth": 2,
+			  "comments": 100,
+			  "ignoreComments": false,
+			  "ignoreTrailingComments": true,
+			  "ignoreUrls": true,
+			  "ignoreStrings": true,
+			  "ignoreTemplateLiterals": true,
+			  "ignoreRegExpLiterals": true
+			}
+		],
+	}
+}

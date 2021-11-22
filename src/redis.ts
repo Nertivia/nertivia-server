@@ -20,6 +20,6 @@ export function connectRedis() {
 }
 
 export function redisClient () {
-  return client as RedisClient;;
+  return client as RedisClient;
 }
 
