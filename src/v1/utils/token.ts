@@ -13,11 +13,14 @@ export function generateToken(id: string, passwordVersion: number) {
 
 export function decodeToken(token: string) {
   const fullToken = `${HEADER}.${token}`;
-  const decodedData = verify(fullToken, env.JWT_SECRET) as string;
-  if (!decodeToken) return false;
+  let decodedData: string | null = null;
+  try {
+    decodedData = verify(fullToken, env.JWT_SECRET) as string;
+  } catch (err) {}
+  if (!decodedData) return false;
   // split id and passwordVersion
   const split = decodedData.split("-");
   const id = split[0];
-  const passwordVersion = split[1];
+  const passwordVersion = parseInt(split[1]);
   return {id, passwordVersion}
 }

@@ -2,6 +2,7 @@ import express from "express";
 import { router as routerV1 } from "./v1/app";
 
 import "./env";
+import { connectRedis, redisClient } from "./redis";
 
 const server = express();
 
@@ -17,8 +18,12 @@ server.all("*", (req, res) => {
   });
 });
 
-server.listen(80, () => {
-  console.log("Listening on port *:80");
-});
+async function startServer() {
+  await connectRedis();
+  server.listen(80, () => {
+    console.log("Listening on port *:80");
+  });
+}
+startServer();
 
 module.exports = server;

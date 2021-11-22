@@ -1,5 +1,5 @@
 import database from "../../database/database";
-import { DBUser } from "../interface/User";
+import { User } from "../interface/User";
 import FlakeId from "@brecert/flakeid";
 import bcrypt from "bcrypt";
 import { randomLetterNumber } from "../utils/random";
@@ -25,7 +25,7 @@ export async function createUser(details: CreateUser) {
   const hashPassword = await bcrypt.hash(details.password, 10);
   const id = flake.gen().toString();
 
-  return await database<DBUser>("users")
+  return await database<User>("users")
     .insert({
       id,
       email: details.email,
@@ -42,7 +42,6 @@ export async function createUser(details: CreateUser) {
       if (err.code === "23505") {
         throw { statusCode: 403, message: "email already exists" };
       }
-      console.log(err);
       throw {
         statusCode: 403,
         message: "Something went wrong when inserting to the database.",
@@ -51,9 +50,34 @@ export async function createUser(details: CreateUser) {
     });
 }
 
-// Check if email and password are correct using bcrypt.
+export async function getUser(id: string) {
+  return database<User>("users")
+    .where({ id })
+    .select("id", "username", "discriminator" ,"password_version")
+    .first()
+    .catch(err => {
+      throw {
+        statusCode: 403,
+        message: "Something went wrong when inserting to the database.",
+        ...err
+      };
+    });
+}
+export async function getUserAll(id: string) {
+  return database<User>("users")
+    .where({ id })
+    .select("*")
+    .first()
+    .catch(err => {
+      throw {
+        statusCode: 403,
+        message: "Something went wrong when inserting to the database.",
+        ...err
+      };
+    });
+}
 export async function authenticateUser(email: string, password: string) {
-  return database<DBUser>("users")
+  return database<User>("users")
     .where({ email })
     .select("password", "id", "password_version")
     .first()
@@ -70,7 +94,7 @@ export async function authenticateUser(email: string, password: string) {
     .catch(err => {
       throw {
         statusCode: 403,
-        message: "Something went wrong when inserting to the database.",
+        message: "Something went wrong when finding from the database.",
         ...err
       };
     });
