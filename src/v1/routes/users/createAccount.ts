@@ -1,18 +1,21 @@
+import { generateToken } from '../../utils/token';
 import { Request, Response } from "express";
-import user from "../../database/user";
+import * as userDao from "../../database/userDao";
 
 export const createAccount = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
 
-  const [id, error, statusCode] = await user.createUser({
+  userDao.createUser({
     email,
     username,
     password,
-  });
+  })
+  .then(id => {
+    const token = generateToken(id, 0)
+    return res.json({ token });
+  }).catch((err: userDao.ReturnError) => {
+    res.status(err.statusCode).json({message: err.message})
+  })
 
-  if (error) {
-    return res.status(statusCode || 403).json({ error });
-  }
 
-  return res.json({ id });
 };

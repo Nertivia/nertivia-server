@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
-import user from "../../database/user";
+import { generateToken } from "../../utils/token";
+import * as userDao from "../../database/userDao";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const [id, error, statusCode] = await user.authenticateUser(email, password);
-
-  if (error) {
-    return res.status(statusCode || 403).json({ error });
-  }
-
-  return res.json({ id });
+  userDao.authenticateUser(email, password)
+  .then(user => {
+    const token = generateToken(user.id, user.password_version)
+    return res.json({ token });
+  })
+  .catch((err: userDao.ReturnError) => {
+    return res.status(err.statusCode).json({ error: err.message });
+  })
 };
