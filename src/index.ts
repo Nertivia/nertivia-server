@@ -2,7 +2,7 @@ import express from "express";
 import { router as routerV1 } from "./v1/app";
 
 import "./env";
-import { connectRedis, redisClient } from "./redis";
+import { connectRedis } from "./redis";
 
 const server = express();
 

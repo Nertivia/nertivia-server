@@ -16,7 +16,9 @@ export function decodeToken(token: string) {
   let decodedData: string | null = null;
   try {
     decodedData = verify(fullToken, env.JWT_SECRET) as string;
-  } catch (err) {}
+  } catch (err) {
+    // Continue regardless of error as it would return false either way
+  }
   if (!decodedData) return false;
   // split id and passwordVersion
   const split = decodedData.split("-");
