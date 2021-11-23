@@ -7,8 +7,8 @@ const config: Knex.Config = {
       database: env.POSTGRES_DB,
       user:     env.POSTGRES_USER,
       password: env.POSTGRES_PASSWORD,
-      host : env.POSTGRES_HOST,
-      port : env.POSTGRES_PORT
+      host: env.POSTGRES_HOST,
+      port: env.POSTGRES_PORT
     },
     pool: {
       min: 2,
