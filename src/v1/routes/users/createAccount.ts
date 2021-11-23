@@ -11,8 +11,8 @@ export const createAccount = async (req: Request, res: Response) => {
     password,
   })
   .then(id => {
-    const token = generateToken(id, 0)
-    return res.json({ token });
+    const token = generateToken(id, 0) // User id, password version = 0
+    return res.json({ token }); // Return the created jwt to the client
   }).catch((err: userDao.ReturnError) => {
     res.status(err.statusCode).json({message: err.message})
   })

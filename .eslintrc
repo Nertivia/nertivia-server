@@ -26,5 +26,8 @@
 			  "ignoreRegExpLiterals": true
 			}
 		],
+		"globals": {
+			"angular": true
+		}
 	}
 }
