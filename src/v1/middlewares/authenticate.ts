@@ -23,13 +23,13 @@ export default function authenticate (options?: Options) {
 
     if (!token) {
       // Token does not exist
-      return res.status(403).json({message: "Token not provided in the header."})
+      return res.status(401).json({message: "Token not provided in the header."})
     }
 
     const decodedToken = decodeToken(token);
     if (!decodedToken) {
       // Token is invalid
-      return res.status(403).json({message: "Token is invalid."})
+      return res.status(401).json({message: "Token is invalid."})
     }
 
     const isInCache = await checkUserInCache(res, req, decodedToken);
@@ -60,7 +60,7 @@ async function checkUserInDatabase(res: Response, req: Request, decodedToken: De
   // check if user exists in database
   const dbUser = await UserDao.getUserAll(decodedToken.id)
   if (!dbUser) {
-    res.status(403).json({message: "User id in the token is invalid"})
+    res.status(401).json({message: "User id in the token is invalid"})
     return;
   }
   
@@ -79,7 +79,7 @@ function checkValidUser(decodedToken: DecodeToken, user: Partial<User>) {
   if (decodedToken.passwordVersion !== user.password_version) {
     return {
       message: "Invalid password version!",
-      statusCode: 403
+      statusCode: 401
     };
   }
   // do more checks in the future.
