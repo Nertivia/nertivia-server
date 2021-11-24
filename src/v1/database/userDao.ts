@@ -39,11 +39,12 @@ export async function createUser(details: CreateUser) {
       return createdIds[0];
     })
     .catch((err) => {
+      // TODO: Implement error handling for database. Error code 42P01 for  error: insert into "users" ("discriminator", "email", "id", "password", "password_version", "username") values ($1, $2, $3, $4, $5, $6) returning "id" - relation "users" does not exist
       if (err.code === "23505") {
         throw { statusCode: 403, message: "email already exists" };
       }
       throw {
-        statusCode: 403,
+        statusCode: 500,
         message: "Something went wrong when inserting to the database.",
         ...err
       };
@@ -57,7 +58,7 @@ export async function getUser(id: string) {
     .first()
     .catch(err => {
       throw {
-        statusCode: 403,
+        statusCode: 500,
         message: "Something went wrong when getting from the database.",
         ...err
       };
@@ -70,7 +71,7 @@ export async function getUserByTag(username: string, discriminator: string) {
     .first()
     .catch(err => {
       throw {
-        statusCode: 403,
+        statusCode: 500,
         message: "Something went wrong when getting from the database.",
         ...err
       };
@@ -83,7 +84,7 @@ export async function getUserAll(id: string) {
     .first()
     .catch(err => {
       throw {
-        statusCode: 403,
+        statusCode: 500,
         message: "Something went wrong when inserting to the database.",
         ...err
       };
@@ -106,7 +107,7 @@ export async function authenticateUser(email: string, password: string) {
     })
     .catch(err => {
       throw {
-        statusCode: 403,
+        statusCode: 500,
         message: "Something went wrong when finding from the database.",
         ...err
       };

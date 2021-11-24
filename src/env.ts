@@ -9,7 +9,7 @@ const env = {
   POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD as string,
   POSTGRES_PORT: parseInt(process.env.POSTGRES_PORT || "5432"),
   POSTGRES_HOST: process.env.POSTGRES_HOST as string,
-  JWT_SECRET: process.env.JWT_SECRET as string,
+  JWT_SECRET: process.env.JWT_SECRET as string || "change_me",
   REDIS_HOST: process.env.REDIS_HOST as string,
   REDIS_PORT: parseInt(process.env.REDIS_PORT || "0"),
   REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,

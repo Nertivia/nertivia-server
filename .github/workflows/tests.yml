@@ -9,17 +9,67 @@ on:
   pull_request:
     branches: [ main ]
 
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    container: node:16-alpine3.12
+    
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: test123
+          POSTGRES_USER: nertivia
+          POSTGRES_DB: nertivia
+          POSTGRES_PORT: 5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-    - run: npm ci
-    - run: npm run build
-    - run: npm test
+      - uses: actions/checkout@v2
+          
+      - run: npm ci
+      - run: npm run build
+      - run: npm run knex:migrate:latest
+        env:
+          POSTGRES_DB: nertivia
+          POSTGRES_USER: nertivia
+          POSTGRES_PASSWORD: test123
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
+          JWT_SECRET: "change me"
+          PORT: 80
+        
+        
+      - run: npm test
+        env:
+          POSTGRES_DB: nertivia
+          POSTGRES_USER: nertivia
+          POSTGRES_PASSWORD: test123
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
+          JWT_SECRET: "change me"
+          PORT: 80
+        

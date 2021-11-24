@@ -10,7 +10,7 @@ module.exports = function() {
 						done(new Error("Token does not match. with created account."))
 						return;
 					}
-				  done(err);
+					done(err);
 				});
 			});
 		});
