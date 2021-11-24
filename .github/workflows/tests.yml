@@ -22,9 +22,9 @@ jobs:
         # Docker Hub image
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: test123
+          POSTGRES_USER: nertivia
+          POSTGRES_DB: nertivia
           POSTGRES_PORT: 5432
         # Set health checks to wait until postgres has started
         options: >-
@@ -61,9 +61,9 @@ jobs:
         
       - run: npm test
         env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nertivia
+          POSTGRES_USER: nertivia
+          POSTGRES_PASSWORD: test123
           POSTGRES_PORT: postgres
           POSTGRES_HOST: 5432
 
