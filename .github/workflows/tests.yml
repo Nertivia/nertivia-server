@@ -9,25 +9,13 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  POSTGRES_DB: ${{secrets.POSTGRES_DB}}
-  POSTGRES_USER: ${{secrets.POSTGRES_USER}}
-  POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-  POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
-  POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
 
-  REDIS_HOST: ${{secrets.REDIS_HOST}}
-  REDIS_PORT: ${{secrets.REDIS_PORT}}
-  REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
-  JWT_SECRET: ${{secrets.JWT_SECRET}}
-  PORT: ${{secrets.PORT}}
-  
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 16.x
@@ -38,3 +26,16 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+        env:
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
+          POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
+
+          REDIS_HOST: ${{secrets.REDIS_HOST}}
+          REDIS_PORT: ${{secrets.REDIS_PORT}}
+          REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+          JWT_SECRET: ${{secrets.JWT_SECRET}}
+          PORT: ${{secrets.PORT}}
+  
