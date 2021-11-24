@@ -51,8 +51,8 @@ jobs:
           POSTGRES_DB: nertivia
           POSTGRES_USER: nertivia
           POSTGRES_PASSWORD: test123
-          POSTGRES_PORT: postgres
-          POSTGRES_HOST: 5432
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
 
           REDIS_HOST: redis
           REDIS_PORT: 6379
@@ -65,8 +65,8 @@ jobs:
           POSTGRES_DB: nertivia
           POSTGRES_USER: nertivia
           POSTGRES_PASSWORD: test123
-          POSTGRES_PORT: postgres
-          POSTGRES_HOST: 5432
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
 
           REDIS_HOST: redis
           REDIS_PORT: 6379
