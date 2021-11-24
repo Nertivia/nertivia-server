@@ -5,6 +5,10 @@ import * as userDao from "../../database/userDao";
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).send({ message: "You must provide an email and password" });
+  }
+
   userDao.authenticateUser(email, password)
   .then(user => {
     // Generate a jwt then return to client for login
