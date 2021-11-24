@@ -11,9 +11,9 @@ module.exports = function() {
 						console.log(err);
 						done(err);
 					}
-					
+
 					global.userToken = res.body.token;
-					done(err);
+					done();
 				});
 			});
 		});
