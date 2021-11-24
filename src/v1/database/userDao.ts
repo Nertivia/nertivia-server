@@ -53,12 +53,25 @@ export async function createUser(details: CreateUser) {
 export async function getUser(id: string) {
   return database<User>("users")
     .where({ id })
-    .select("id", "username", "discriminator" ,"password_version")
+    .select("id", "username", "discriminator")
     .first()
     .catch(err => {
       throw {
         statusCode: 403,
-        message: "Something went wrong when inserting to the database.",
+        message: "Something went wrong when getting from the database.",
+        ...err
+      };
+    });
+}
+export async function getUserByTag(username: string, discriminator: string) {
+  return database<User>("users")
+    .where({ username, discriminator })
+    .select("id", "username", "discriminator")
+    .first()
+    .catch(err => {
+      throw {
+        statusCode: 403,
+        message: "Something went wrong when getting from the database.",
         ...err
       };
     });

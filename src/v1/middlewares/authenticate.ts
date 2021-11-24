@@ -69,13 +69,13 @@ async function checkUserInDatabase(res: Response, req: Request, decodedToken: De
     res.status(checkUser.statusCode).json({message: checkUser.message})
     return; 
   }
-  req.user = dbUser;
-  await userCache.addUser(dbUser);
+  req.user = filterUserValues(dbUser);
+  await userCache.addUser(req.user);
   return true;
 }
 
 
-function checkValidUser(decodedToken: DecodeToken, user: User) {
+function checkValidUser(decodedToken: DecodeToken, user: Partial<User>) {
   if (decodedToken.passwordVersion !== user.password_version) {
     return {
       message: "Invalid password version!",
@@ -84,4 +84,11 @@ function checkValidUser(decodedToken: DecodeToken, user: User) {
   }
   // do more checks in the future.
   return true;
+}
+
+function filterUserValues(user: User): Partial<User> & {id: string} {
+  return {
+    id: user.id,
+    password_version: user.password_version,
+  }
 }
