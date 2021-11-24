@@ -7,13 +7,9 @@ module.exports = function() {
 				.send({email: global.email, username: "test", password: "test123"})
 				.expect(200)
 				.end(function(err, res) {
-					if (err) {
-						console.log(err);
-						done(err);
-					}
 
 					global.userToken = res.body.token;
-					done();
+					done(err);
 				});
 			});
 		});
