@@ -9,59 +9,32 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+  POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+  POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+  POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
+  POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
+
+  REDIS_HOST: ${{secrets.REDIS_HOST}}
+  REDIS_PORT: ${{secrets.REDIS_PORT}}
+  REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+  JWT_SECRET: ${{secrets.JWT_SECRET}}
+  PORT: ${{secrets.PORT}}
+  
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: node:16-alpine3.12
     
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: postgres
-          POSTGRES_PORT: 5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        # Docker Hub image
-        image: redis
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v2
-
-      - name: Install dependencies 
-        run: npm ci
-      
-      - name: Build the source code
-        run: npm run build
-
-      - name: Run tests
-        run: npm test
-        env:
-          POSTGRES_DB: nertivia
-          POSTGRES_USER: "nertivia"
-          POSTGRES_PASSWORD: "test123"
-          POSTGRES_PORT: postgres
-          POSTGRES_HOST: 5432
-
-          REDIS_HOST: redis
-          REDIS_PORT: 6379
-          JWT_SECRET: "change me"
-          PORT: 80
-        
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+          
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
