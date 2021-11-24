@@ -33,8 +33,11 @@ export default function authenticate (options?: Options) {
     }
 
     const isInCache = await checkUserInCache(res, req, decodedToken);
-    if (isInCache === undefined || isInCache === true) return;
-    checkUserInDatabase(res, req, decodedToken)
+    if (isInCache) return next();
+    if (isInCache === undefined) return;
+    const isInDatabase = await checkUserInDatabase(res, req, decodedToken)
+    if (isInDatabase) return next();
+    
     
   }
 } 
