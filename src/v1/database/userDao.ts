@@ -43,7 +43,7 @@ export async function createUser(details: CreateUser) {
         throw { statusCode: 403, message: "email already exists" };
       }
       throw {
-        statusCode: 403,
+        statusCode: 500,
         message: "Something went wrong when inserting to the database.",
         ...err
       };
