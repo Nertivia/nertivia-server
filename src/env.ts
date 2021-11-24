@@ -13,6 +13,7 @@ const env = {
   REDIS_HOST: process.env.REDIS_HOST as string,
   REDIS_PORT: parseInt(process.env.REDIS_PORT || "0"),
   REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
+  PORT: process.env.PORT || 80
 }
 
 export default env
