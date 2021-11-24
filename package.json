@@ -8,7 +8,7 @@
     "start": "node ./build/index.js",
     "start:build": "npm run build && node ./build/index.js",
     "dev": "nodemon src/index.ts",
-    "test": "mocha tests/test.js --timeout 10000 --reporter spec",
+    "test": "mocha tests/test.js --timeout 10000 --reporter spec --exit",
     "lint": "eslint . --ext .ts",
     "knex:migrate:make": "knex --knexfile src/database/knexfile.ts migrate:make -x ts",
     "knex:migrate:latest": "knex --knexfile src/database/knexfile.ts migrate:latest",
