@@ -13,5 +13,20 @@ module.exports = function() {
 				});
 			});
 		});
+
+		describe(`POST /api/${apiVersion}/users/create`, function() {
+			it('Sends bad data to try crash the server', function(done) {
+				request.post(`/api/${apiVersion}/users/create`)
+				.send({})
+				.expect(400)
+				.end(function(err, res) {
+					if(err) {
+						done(err);
+					} else {
+						done();
+					}
+				});
+			});
+		});
 	});
 };

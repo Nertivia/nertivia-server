@@ -40,9 +40,9 @@ export async function addFriend(requesterId: string, recipientId: string) {
   return recipientUser
 }
 function handleError(status: Status) {
-  if (status === Status.Blocked) return {statusCode: 403, message: "User is blocked."}
-  if (status === Status.Incoming) return {statusCode: 403, message: "Accept the friend request."}
-  if (status === Status.Outgoing) return {statusCode: 403, message: "Request already sent."}
-  if (status === Status.Friends) return {statusCode: 403, message: "Already friends."}
+  if (status === Status.Blocked) return {statusCode: 400, message: "User is blocked."}
+  if (status === Status.Incoming) return {statusCode: 400, message: "Accept the friend request."}
+  if (status === Status.Outgoing) return {statusCode: 400, message: "Request already sent."}
+  if (status === Status.Friends) return {statusCode: 400, message: "Already friends."}
 }
 

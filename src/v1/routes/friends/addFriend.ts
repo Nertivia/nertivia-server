@@ -20,7 +20,7 @@ export const addFriend = async (req: Request, res: Response) => {
     return;
   }
   if (body.id === req.user.id) {
-    res.status(403).json({ message: "Cannot add yourself." });
+    res.status(400).json({ message: "Cannot add yourself." });
     return;
   }
   friendDao

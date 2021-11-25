@@ -4,7 +4,9 @@ import * as userDao from "../../database/userDao";
 
 export const createAccount = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
-
+  if (!email || !username || !password) {
+    return res.status(400).send({ message: "You must provide an email, username, and password" });
+  }
   userDao.createUser({
     email,
     username,

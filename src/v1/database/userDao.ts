@@ -3,6 +3,7 @@ import { User } from "../interface/User";
 import FlakeId from "@brecert/flakeid";
 import bcrypt from "bcrypt";
 import { randomLetterNumber } from "../utils/random";
+import handlePostgreError from "./errorHandler";
 
 const flake = new FlakeId({
   mid: 42,
@@ -39,15 +40,15 @@ export async function createUser(details: CreateUser) {
       return createdIds[0];
     })
     .catch((err) => {
-      // TODO: Implement error handling for database. Error code 42P01 for  error: insert into "users" ("discriminator", "email", "id", "password", "password_version", "username") values ($1, $2, $3, $4, $5, $6) returning "id" - relation "users" does not exist
       if (err.code === "23505") {
-        throw { statusCode: 403, message: "email already exists" };
+        throw { statusCode: 400, message: "email already exists" };
       }
-      throw {
-        statusCode: 500,
-        message: "Something went wrong when inserting to the database.",
-        ...err
-      };
+      if (handlePostgreError(err)) {
+        throw handlePostgreError(err)
+      } else{
+
+        throw { statusCode: 500, message: "internal server error" };
+      }
     });
 }
 
@@ -97,11 +98,11 @@ export async function authenticateUser(email: string, password: string) {
     .first()
     .then(async (user) => {
       if (!user) {
-        throw { statusCode: 404, message: "Invalid email." };
+        throw { statusCode: 401, message: "Invalid email." };
       }
       const verifyPassword = await bcrypt.compare(password, user.password);
       if (!verifyPassword) {
-        throw { statusCode: 403, message: "Invalid password" };
+        throw { statusCode: 400, message: "Invalid password" };
       }
       return user;
     })
