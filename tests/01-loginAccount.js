@@ -14,20 +14,5 @@ module.exports = function() {
 				});
 			});
 		});
-
-		describe(`POST /api/${apiVersion}/users/login`, function() {
-			it('login to the user', function(done) {
-			  request.post(`/api/${apiVersion}/users/login`)
-				.send({})
-				.expect(400)
-				.end(function(err, res) {
-					if(err) {
-						done(err);
-					} else {
-						done();
-					}
-				});
-			});
-		});
 	});
 };
