@@ -14,6 +14,8 @@ export const createAccount = async (req: Request, res: Response) => {
     return res.status(400).send({ message: "The email you provided is not valid" });
   }
 
+  // TODO: Make sure to verify the user by sending an email to verify
+
   userDao.createUser({
     email,
     username,
@@ -25,6 +27,4 @@ export const createAccount = async (req: Request, res: Response) => {
   }).catch((err: userDao.ReturnError) => {
     res.status(err.statusCode).json({message: err.message})
   })
-
-
 };
