@@ -22,6 +22,7 @@ module.exports = function() {
 				.expect(400)
 				.end(function(err, res) {
 					if(err) {
+						console.log("ERR", res.body)
 						done(err);
 					} else {
 						done();
