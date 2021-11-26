@@ -1,7 +1,7 @@
 import { generateToken } from '../../utils/token';
 import { Request, Response } from "express";
 import * as userDao from "../../database/userDao";
-import isEmailValid from "../../utils/email";
+import { isEmailValid } from "../../utils/email";
 
 
 export const createAccount = async (req: Request, res: Response) => {
@@ -13,7 +13,7 @@ export const createAccount = async (req: Request, res: Response) => {
   if (!isEmailValid(email)) {
     return res.status(400).send({ message: "The email you provided is not valid" });
   }
-  
+
   userDao.createUser({
     email,
     username,
