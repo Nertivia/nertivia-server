@@ -1,5 +1,5 @@
 import fs from 'fs';
-
+import validTlds from '../../validTlds';
 const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 
 export async function isEmailValid(email: string): Promise<boolean> {
@@ -27,9 +27,6 @@ export async function isEmailValid(email: string): Promise<boolean> {
 	if(domainParts.some(function(part) { return part.length>63; })){ // Domain cannot be longer than 63 chars
 		return false;
 	}
-	let validTlds = await fs.promises.readFile('./src/validTlds.json', 'utf8')
-
-	validTlds = await JSON.parse(validTlds)
 	if(!validTlds.includes(domainParts[domainParts.length - 1])){ // Check that the TLD is valid
 		return false;
 	}
