@@ -10,7 +10,7 @@ export const createAccount = async (req: Request, res: Response) => {
     return res.status(400).send({ message: "You must provide an email, username, and password" });
   }
 
-  if (!isEmailValid(email)) {
+  if (!await isEmailValid(email)) {
     return res.status(400).send({ message: "The email you provided is not valid" });
   }
 
