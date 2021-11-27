@@ -98,11 +98,11 @@ export async function authenticateUser(email: string, password: string) {
     .first()
     .then(async (user) => {
       if (!user) {
-        throw { statusCode: 401, message: "Invalid email." };
+        throw { statusCode: 401, message: "Invalid email or password!" };
       }
       const verifyPassword = await bcrypt.compare(password, user.password);
       if (!verifyPassword) {
-        throw { statusCode: 400, message: "Invalid password" };
+        throw { statusCode: 401, message: "Invalid email or password!" };
       }
       return user;
     })

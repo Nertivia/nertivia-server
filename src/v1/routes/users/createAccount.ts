@@ -1,12 +1,21 @@
 import { generateToken } from '../../utils/token';
 import { Request, Response } from "express";
 import * as userDao from "../../database/userDao";
+import { isEmailValid } from "../../utils/email";
+
 
 export const createAccount = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
   if (!email || !username || !password) {
     return res.status(400).send({ message: "You must provide an email, username, and password" });
   }
+
+  if (!await isEmailValid(email)) {
+    return res.status(400).send({ message: "The email you provided is not valid" });
+  }
+
+  // TODO: Make sure to verify the user by sending an email to verify
+
   userDao.createUser({
     email,
     username,
@@ -18,6 +27,4 @@ export const createAccount = async (req: Request, res: Response) => {
   }).catch((err: userDao.ReturnError) => {
     res.status(err.statusCode).json({message: err.message})
   })
-
-
 };
