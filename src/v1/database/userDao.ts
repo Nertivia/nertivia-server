@@ -21,12 +21,14 @@ interface CreateUser {
   password: string;
 }
 
+const usersTable = database<User>("users");
+
 // Creates an account and then returns the id.
 export async function createUser(details: CreateUser) {
   const hashPassword = await bcrypt.hash(details.password, 10);
   const id = flake.gen().toString();
 
-  return await database<User>("users")
+  return await usersTable
     .insert({
       id,
       email: details.email,
@@ -53,7 +55,7 @@ export async function createUser(details: CreateUser) {
 }
 
 export async function getUser(id: string) {
-  return database<User>("users")
+  return usersTable
     .where({ id })
     .select("id", "username", "discriminator")
     .first()
@@ -66,7 +68,7 @@ export async function getUser(id: string) {
     });
 }
 export async function getUserByTag(username: string, discriminator: string) {
-  return database<User>("users")
+  return usersTable
     .where({ username, discriminator })
     .select("id", "username", "discriminator")
     .first()

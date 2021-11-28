@@ -11,6 +11,9 @@ enum Status {
   Friends = 2,
   Blocked = 3,
 }
+
+const friendsTable = database<Friend>("friends");
+
 export async function addFriend(requesterId: string, recipientId: string) {
   // check if recipient exists
   const recipientUser = await userDao.getUser(recipientId);
@@ -18,7 +21,7 @@ export async function addFriend(requesterId: string, recipientId: string) {
     throw { statusCode: 404, message:"Invalid recipient id."}
   }
   // check if already exists.
-  const existingFriend = await database<Friend>("friends")
+  const existingFriend = await friendsTable
     .where({ requester_id: requesterId, recipient_id: recipientId })
     .select("status")
     .first();
@@ -36,7 +39,7 @@ export async function addFriend(requesterId: string, recipientId: string) {
     recipient_id: recipientId,
     status: Status.Incoming
   }
-  await database<Friend>("friends").insert([insertRequester, insertRecipient])
+  await friendsTable.insert([insertRequester, insertRecipient])
   return recipientUser
 }
 function handleError(status: Status) {
