@@ -3,10 +3,10 @@
 
 name: Node.js CI
 
+# This workflow can be used for pushing to the production server and will only be ran when code is pushed to the main branch
+
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 
