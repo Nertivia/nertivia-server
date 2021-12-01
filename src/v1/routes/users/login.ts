@@ -9,6 +9,9 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).send({ message: "You must provide an email and password" });
   }
 
+  // TODO: Check user IP against stored user IPs. If the IP is different or the ip was last used 15+ days ago then send a verification email(make the user provide a code).
+  // Alternative use a 2fa code or send text message code
+  
   User.authenticateUser(email, password)
   .then(user => {
     // Generate a jwt then return to client for login
