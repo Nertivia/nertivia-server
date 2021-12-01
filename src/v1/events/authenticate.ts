@@ -12,7 +12,7 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
     return;
   }
   const user = await authenticate(data.token).catch(err => {
-    socket.emit(ServerEvent.AUTHENTICATE_ERROR,{message: err.message});
+    socket.emit(ServerEvent.AUTHENTICATE_ERROR, {message: err.message});
     socket.disconnect(true);
   })
   if (!user) return;
