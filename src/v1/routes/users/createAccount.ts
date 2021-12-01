@@ -1,8 +1,8 @@
 import { generateToken } from '../../utils/token';
 import { Request, Response } from "express";
-import * as userDao from "../../database/userDao";
 import { isEmailValid } from "../../utils/email";
-
+import { createUser } from '../../database/userDao';
+import * as User from '../../database/userDao';
 
 export const createAccount = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
@@ -16,7 +16,7 @@ export const createAccount = async (req: Request, res: Response) => {
 
   // TODO: Make sure to verify the user by sending an email to verify
 
-  userDao.createUser({
+  createUser({
     email,
     username,
     password,
@@ -24,7 +24,7 @@ export const createAccount = async (req: Request, res: Response) => {
   .then(id => {
     const token = generateToken(id, 0) // User id, password version = 0
     return res.json({ token }); // Return the created jwt to the client
-  }).catch((err: userDao.ReturnError) => {
+  }).catch((err: User.ReturnError) => {
     res.status(err.statusCode).json({message: err.message})
   })
 };

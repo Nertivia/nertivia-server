@@ -1,7 +1,7 @@
 import { decodeToken } from "./token"
 import * as UserCache from "../cache/userCache";
-import * as UserDao from "../database/userDao";
 import { User } from "../interface/User";
+import { getUserAll } from "../database/userDao";
 
 
 const FAIL_MESSAGE = {
@@ -31,7 +31,7 @@ async function getUser(id: string) {
   if (cachedUser) return cachedUser;
   
   // check in database
-  const dbUser = await UserDao.getUserAll(id)
+  const dbUser = await getUserAll(id)
   if (!dbUser) return null;
   return dbUser
 }

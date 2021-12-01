@@ -1,5 +1,5 @@
 import database from "../../database/database";
-import * as userDao from './userDao';
+import { getUser } from "../cache/userCache";
 interface Friend {
   requester_id: string;
   recipient_id: string;
@@ -16,7 +16,7 @@ enum Status {
 
 export async function addFriend(requesterId: string, recipientId: string) {
   // check if recipient exists
-  const recipientUser = await userDao.getUser(recipientId);
+  const recipientUser = await getUser(recipientId);
   if (!recipientUser) {
     throw { statusCode: 404, message:"Invalid recipient id."}
   }

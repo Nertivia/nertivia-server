@@ -66,19 +66,6 @@ export async function getUser(id: string) {
       };
     });
 }
-export async function getUserByTag(username: string, discriminator: string) {
-  return database<User>("users")
-    .where({ username, discriminator })
-    .select("id", "username", "discriminator")
-    .first()
-    .catch(err => {
-      throw {
-        statusCode: 500,
-        message: "Something went wrong when getting from the database.",
-        ...err
-      };
-    });
-}
 export async function getUserAll(id: string) {
   return database<User>("users")
     .where({ id })
@@ -92,6 +79,20 @@ export async function getUserAll(id: string) {
       };
     });
 }
+export async function getUserByTag(username: string, discriminator: string) {
+  return database<User>("users")
+    .where({ username, discriminator })
+    .select("id", "username", "discriminator")
+    .first()
+    .catch(err => {
+      throw {
+        statusCode: 500,
+        message: "Something went wrong when getting from the database.",
+        ...err
+      };
+    });
+}
+
 export async function authenticateUser(email: string, password: string) {
   return database<User>("users")
     .where({ email })

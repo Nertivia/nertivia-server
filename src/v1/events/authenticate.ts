@@ -1,18 +1,24 @@
 import { Socket } from "socket.io";
+import { ServerEvent } from "../constants/ServerEvent";
+import { getUser } from "../database/userDao";
 import {authenticate} from '../utils/authenticate';
 interface Data {
   token: string;
 }
-export default function authenticateEvent(data: Data, socket: Socket) {
+export default async function authenticateEvent(data: Data, socket: Socket) {
   if (!data.token) {
-    socket.emit("authenticate_error", {message: "Token not provided in the header."})
+    socket.emit(ServerEvent.AUTHENTICATE_ERROR, {message: "Token not provided."})
     socket.disconnect(true);
     return;
   }
-  authenticate(data.token).then(user => {
-    // TODO: save socket id with value of user id.
-  }).catch(err => {
-    socket.emit("authenticate_error",{message: err.message});
+  const user = await authenticate(data.token).catch(err => {
+    socket.emit(ServerEvent.AUTHENTICATE_ERROR,{message: err.message});
     socket.disconnect(true);
+  })
+  if (!user) return;
+  const me = await getUser(user.id);
+
+  socket.emit(ServerEvent.AUTHORIZED, {
+    me
   })
 }
