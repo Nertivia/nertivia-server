@@ -6,9 +6,10 @@ let io:socket.Server | null;
 
 export function configureIoServer(server: http.Server) {
   io = new socket.Server(server, {
-    // cors: {
-    //   origin: '*'
-    // }
+    transports: ["websocket"],
+    cors: {
+      origin: '*'
+    }
   });
 
   io.on('connection', socket => {

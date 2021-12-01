@@ -1,5 +1,5 @@
-import authorize from "./authorize";
+import authenticate from "./authenticate";
 
 export default {
-  authorize
+  authenticate
 }
