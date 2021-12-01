@@ -4,7 +4,6 @@ import {authenticate} from "../utils/authenticate";
 interface Options {
   allowBots?: boolean
 }
-type DecodeToken = {id: string, passwordVersion: number}
 
 const defaultOptions = {
   allowBots: false,
