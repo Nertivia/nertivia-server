@@ -11,11 +11,13 @@ export function connectRedis() {
       port: env.REDIS_PORT,
       password: env.REDIS_PASSWORD,
     })
+
     client.on('connect', () => {
       client?.flushall();
       console.log("Connected to Redis.")
       resolve(client);
     })
+    
   })
 }
 
