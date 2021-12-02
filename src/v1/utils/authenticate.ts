@@ -1,5 +1,5 @@
 import { decodeToken } from "./token"
-import * as UserCache from "../cache/userCache";
+import {addCachedUser, getCachedUser} from "../cache/userCache";
 import { User } from "../interface/User";
 import { getUserAll } from "../database/userDao";
 
@@ -18,7 +18,7 @@ export async function authenticate(token: string) {
   if (!user) throw FAIL_MESSAGE.INVALID_TOKEN;
   const userValidStatus = checkValidUser(decodedToken, user);
   if (userValidStatus === true) {
-    return filterUserValues(user as User);
+    return user
   }
   throw checkValidUser;
 
@@ -27,12 +27,13 @@ export async function authenticate(token: string) {
 
 async function getUser(id: string) {
   // Check in cache
-  const cachedUser = await UserCache.getUser(id);
+  const cachedUser = await getCachedUser(id);
   if (cachedUser) return cachedUser;
   
   // check in database
   const dbUser = await getUserAll(id)
   if (!dbUser) return null;
+  await addCachedUser(filterUserValues(dbUser));
   return dbUser
 }
 
