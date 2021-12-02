@@ -1,5 +1,5 @@
 import database from "../../database/database";
-import { getUser } from "../cache/userCache";
+import {getUser} from "../database/userDao";
 interface Friend {
   requester_id: string;
   recipient_id: string;
@@ -35,8 +35,8 @@ export async function addFriend(requesterId: string, recipientId: string) {
     status: Status.Outgoing
   }
   const insertRecipient = {
-    requester_id: requesterId,
-    recipient_id: recipientId,
+    requester_id: recipientId,
+    recipient_id: requesterId,
     status: Status.Incoming
   }
   await database<Friend>("friends").insert([insertRequester, insertRecipient])
@@ -49,3 +49,9 @@ function handleError(status: Status) {
   if (status === Status.Friends) return {statusCode: 400, message: "Already friends."}
 }
 
+export async function getFriends(userId: string) {
+  return database<Friend>("friends")
+    .join('users', 'users.id', 'friends.recipient_id')
+    .select("friends.status", "users.username", "users.discriminator", "users.id")
+    .where({requester_id: userId})
+}

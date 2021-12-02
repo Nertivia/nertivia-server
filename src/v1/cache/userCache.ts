@@ -1,7 +1,7 @@
 import { redisClient } from "../../redis";
 import { User } from "../interface/User";
 
-export function addUser(user: Partial<User> ) {
+export function addCachedUser(user: Partial<User> ) {
   return new Promise((resolve, reject) => {
     const key = `users:${user.id}`;
     const value = JSON.stringify(user);
@@ -11,7 +11,7 @@ export function addUser(user: Partial<User> ) {
     });
   })
 }
-export function getUser(id: string): Promise<null | (Partial<User> & {id: string})> {
+export function getCachedUser(id: string): Promise<null | (Partial<User> & {id: string})> {
   return new Promise((resolve, reject) => {
     const key = `users:${id}`;
     redisClient().get(key, (err, reply) => {

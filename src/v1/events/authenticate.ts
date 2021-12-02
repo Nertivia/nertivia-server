@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { ServerEvent } from "../constants/ServerEvent";
+import { getFriends } from "../database/friendDao";
 import { getUser } from "../database/userDao";
 import {authenticate} from '../utils/authenticate';
 interface Data {
@@ -18,7 +19,12 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
   if (!user) return;
   const me = await getUser(user.id);
 
+  const friends = await getFriends(user.id);
+
+
+
   socket.emit(ServerEvent.AUTHORIZED, {
-    me
+    me,
+    friends
   })
 }
