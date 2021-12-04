@@ -64,7 +64,7 @@ export async function getFriends(userId: string) {
 
   // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
   
-  const friends = dbData.filter(friend => friend.status === Status.Outgoing);
+  const friends = dbData.filter(friend => friend.status === Status.Incoming);
   let updatedFriends: {user: User, status: Number}[] = [];
 
   friends.forEach(friend => {
@@ -79,4 +79,80 @@ export async function getFriends(userId: string) {
   })
 
   return updatedFriends;
+}
+
+
+export async function getOutgoing(userId: string) {
+  const dbData = await database<Friend>("friends")
+    .join('users', 'users.id', 'friends.recipient_id')
+    .select("friends.status", "users.username", "users.discriminator", "users.id")
+    .where({requester_id: userId})
+
+  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
+  
+  const outgoing = dbData.filter(friend => friend.status === Status.Outgoing);
+  let updatedFriends: {user: User, status: Number}[] = [];
+
+  outgoing.forEach(outgoingFriend => {
+    updatedFriends.push({
+      user: {
+        username: outgoingFriend.username,
+        discriminator: outgoingFriend.discriminator,
+        id: outgoingFriend.id,
+      },
+      status: Status.Friends
+   })
+  })
+
+  return updatedFriends;
+}
+
+export async function getIncoming(userId: string) {
+  const dbData = await database<Friend>("friends")
+    .join('users', 'users.id', 'friends.recipient_id')
+    .select("friends.status", "users.username", "users.discriminator", "users.id")
+    .where({requester_id: userId})
+
+  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
+  
+  const incomming = dbData.filter(user => user.status === Status.Incoming);
+  let updatedFriends: {user: User, status: Number}[] = [];
+
+  incomming.forEach(incommingFriend => {
+    updatedFriends.push({
+      user: {
+        username: incommingFriend.username,
+        discriminator: incommingFriend.discriminator,
+        id: incommingFriend.id,
+      },
+      status: Status.Friends
+   })
+  })
+
+  return updatedFriends;
+}
+
+export async function getBlocked(userId: string) {
+  const dbData = await database<Friend>("friends")
+    .join('users', 'users.id', 'friends.recipient_id')
+    .select("friends.status", "users.username", "users.discriminator", "users.id")
+    .where({requester_id: userId})
+
+  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
+  
+  const blockedUsers = dbData.filter(user => user.status === Status.Blocked);
+  let updatedUsers: {user: User, status: Number}[] = [];
+
+  blockedUsers.forEach(blockedUser => {
+    updatedUsers.push({
+      user: {
+        username: blockedUser.username,
+        discriminator: blockedUser.discriminator,
+        id: blockedUser.id,
+      },
+      status: Status.Friends
+   })
+  })
+
+  return updatedUsers;
 }
