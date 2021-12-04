@@ -57,14 +57,14 @@ function handleError(status: Status) {
 }
 
 export async function getFriends(userId: string) {
-  //const dbData = await database<Friend>("friends")
-  //.join('users', 'users.id', 'friends.recipient_id')
-  //.select("friends.status", "users.username", "users.discriminator", "users.id")
-  //.where({requester_id: userId})
+  const dbData = await database<Friend>("friends")
+    .join('users', 'users.id', 'friends.recipient_id')
+    .select("friends.status", "users.username", "users.discriminator", "users.id")
+    .where({requester_id: userId})
 
-  const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
+  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
   
-  /*const friends = dbData.filter(friend => friend.status === Status.Outgoing);
+  const friends = dbData.filter(friend => friend.status === Status.Outgoing);
   let updatedFriends: {user: User, status: Number}[] = [];
 
   friends.forEach(friend => {
@@ -76,7 +76,7 @@ export async function getFriends(userId: string) {
       },
       status: Status.Friends
    })
-  })*/
+  })
 
-  return dbData.rows;
+  return updatedFriends;
 }
