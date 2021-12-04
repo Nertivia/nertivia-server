@@ -5,6 +5,13 @@ interface Friend {
   recipient_id: string;
   status: Status;
 }
+
+interface User {
+  id: string,
+  username: string,
+  discriminator: string
+}
+
 enum Status {
   Incoming = 0,
   Outgoing = 1,
@@ -50,8 +57,26 @@ function handleError(status: Status) {
 }
 
 export async function getFriends(userId: string) {
-  return database<Friend>("friends")
-    .join('users', 'users.id', 'friends.recipient_id')
-    .select("friends.status", "users.username", "users.discriminator", "users.id")
-    .where({requester_id: userId})
+  //const dbData = await database<Friend>("friends")
+  //.join('users', 'users.id', 'friends.recipient_id')
+  //.select("friends.status", "users.username", "users.discriminator", "users.id")
+  //.where({requester_id: userId})
+
+  const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
+  
+  /*const friends = dbData.filter(friend => friend.status === Status.Outgoing);
+  let updatedFriends: {user: User, status: Number}[] = [];
+
+  friends.forEach(friend => {
+    updatedFriends.push({
+      user: {
+        username: friend.username,
+        discriminator: friend.discriminator,
+        id: friend.id,
+      },
+      status: Status.Friends
+   })
+  })*/
+
+  return dbData.rows;
 }
