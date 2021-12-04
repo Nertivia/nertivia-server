@@ -109,18 +109,5 @@ export async function getBlocked(userId: string) {
   // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
   
   const blockedUsers = dbData.filter(user => user.status === Status.Blocked);
-  let updatedUsers: {user: User, status: Number}[] = [];
-
-  blockedUsers.forEach(blockedUser => {
-    updatedUsers.push({
-      user: {
-        username: blockedUser.username,
-        discriminator: blockedUser.discriminator,
-        id: blockedUser.id,
-      },
-      status: blockedUser.status,
-   })
-  })
-
-  return updatedUsers;
+  return await returnFriendShipData(blockedUsers);
 }
