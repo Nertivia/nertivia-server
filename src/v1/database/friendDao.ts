@@ -63,58 +63,10 @@ async function returnFriendShipsFromDatabase(userId: string) {
   .where({requester_id: userId})
 }
 
-export async function getFriends(userId: string) {
-  const dbData = await returnFriendShipsFromDatabase(userId);
-
-  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
-  
-  const friends = dbData.filter(friend => friend.status === Status.Incoming);
+async function returnFriendShipData(data: any){
   let updatedFriends: {user: User, status: Number}[] = [];
 
-  friends.forEach(friend => {
-    updatedFriends.push({
-      user: {
-        username: friend.username,
-        discriminator: friend.discriminator,
-        id: friend.id,
-      },
-      status: friend.status,
-   })
-  })
-
-  return updatedFriends;
-}
-
-export async function getOutgoing(userId: string) {
-  const dbData = await returnFriendShipsFromDatabase(userId);
-
-  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
-  
-  const outgoing = dbData.filter(friend => friend.status === Status.Outgoing);
-  let updatedFriends: {user: User, status: Number}[] = [];
-
-  outgoing.forEach(outgoingFriend => {
-    updatedFriends.push({
-      user: {
-        username: outgoingFriend.username,
-        discriminator: outgoingFriend.discriminator,
-        id: outgoingFriend.id,
-      },
-      status: outgoingFriend.status,
-   })
-  })
-
-  return updatedFriends;
-}
-
-export async function getIncoming(userId: string) {
-  const dbData = await returnFriendShipsFromDatabase(userId);
-  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
-  
-  const incomming = dbData.filter(user => user.status === Status.Incoming);
-  let updatedFriends: {user: User, status: Number}[] = [];
-
-  incomming.forEach(incommingFriend => {
+  data.forEach((incommingFriend: any) => {
     updatedFriends.push({
       user: {
         username: incommingFriend.username,
@@ -126,6 +78,29 @@ export async function getIncoming(userId: string) {
   })
 
   return updatedFriends;
+}
+
+export async function getFriends(userId: string) {
+  const dbData = await returnFriendShipsFromDatabase(userId);
+
+  // Optional SQL only version: const dbData = await database.raw("SELECT friends.status, json_build_object('id', users.id, 'username', users.username, 'discriminator', users.discriminator) as user from friends INNER JOIN users ON users.id = friends.recipient_id WHERE friends.requester_id = ?;", [userId])
+  
+  const friends = dbData.filter(friend => friend.status === Status.Incoming);
+  return await returnFriendShipData(friends);
+}
+
+export async function getOutgoing(userId: string) {
+  const dbData = await returnFriendShipsFromDatabase(userId);
+  
+  const outgoing = dbData.filter(friend => friend.status === Status.Outgoing);
+  return await returnFriendShipData(outgoing);
+}
+
+export async function getIncoming(userId: string) {
+  const dbData = await returnFriendShipsFromDatabase(userId);
+
+  const incomming = dbData.filter(user => user.status === Status.Incoming);
+  return await returnFriendShipData(incomming);
 }
 
 export async function getBlocked(userId: string) {
