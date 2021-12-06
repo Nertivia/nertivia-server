@@ -1,9 +1,10 @@
-import database from "../../database/database";
+import database from "../../database";
 import { User } from "../interface/User";
 import FlakeId from "@brecert/flakeid";
 import bcrypt from "bcrypt";
 import { randomLetterNumber } from "../utils/random";
-import handlePostgreError from "./errorHandler";
+import handlePostgresError from "./errorHandler";
+import prisma from "../../database";
 
 const flake = new FlakeId({
   mid: 42,
@@ -27,38 +28,36 @@ export async function createUser(details: CreateUser) {
   const hashPassword = await bcrypt.hash(details.password, 10);
   const id = flake.gen().toString();
 
-  return await database<User>("users")
-    .insert({
+  return await prisma.user.create({
+    data: {
       id,
       email: details.email,
-      discriminator: randomLetterNumber(4),
       username: details.username,
+      discriminator: randomLetterNumber(4),
       password: hashPassword,
-      password_version: 0,
-    })
-    .returning("id")
-    .then((createdIds) => {
-      return createdIds[0];
-    })
-    .catch((err) => {
-      if (err.code === "23505") {
-        throw { statusCode: 400, message: "email already exists" };
-      }
-      if (handlePostgreError(err)) {
-        throw handlePostgreError(err)
-      } else{
+      passwordVersion: 0
+    },
+    select: { id: true }
+  }).then(user => user.id)
+  .catch(err => {
+    if (err.code === "P2002") {
+      throw { statusCode: 400, message: "email already exists" };
+    }
+    if (handlePostgresError(err)) {
+      throw handlePostgresError(err)
+    } else{
+      throw { statusCode: 500, message: "internal server error" };
+    }
+  })
 
-        throw { statusCode: 500, message: "internal server error" };
-      }
-    });
 }
 
 export async function getUser(id: string) {
-  return database<User>("users")
-    .where({ id })
-    .select("id", "username", "discriminator")
-    .first()
-    .catch(err => {
+  return prisma.user.findFirst(
+    {
+      where: {id},
+      select: {id: true, username: true, discriminator: true}
+    }).catch(err => {
       throw {
         statusCode: 500,
         message: "Something went wrong when getting from the database.",
@@ -67,24 +66,20 @@ export async function getUser(id: string) {
     });
 }
 export async function getUserAll(id: string) {
-  return database<User>("users")
-    .where({ id })
-    .select("*")
-    .first()
-    .catch(err => {
-      throw {
-        statusCode: 500,
-        message: "Something went wrong when inserting to the database.",
-        ...err
-      };
-    });
+  return prisma.user.findFirst({where: {id: id}}).catch(err => {
+    throw {
+      statusCode: 500,
+      message: "Something went wrong when inserting to the database.",
+      ...err
+    };
+  });
 }
 export async function getUserByTag(username: string, discriminator: string) {
-  return database<User>("users")
-    .where({ username, discriminator })
-    .select("id", "username", "discriminator")
-    .first()
-    .catch(err => {
+  return prisma.user.findFirst(
+    {
+      where: {username, discriminator},
+      select: {id: true, username: true, discriminator: true}
+    }).catch(err => {
       throw {
         statusCode: 500,
         message: "Something went wrong when getting from the database.",
@@ -94,11 +89,13 @@ export async function getUserByTag(username: string, discriminator: string) {
 }
 
 export async function authenticateUser(email: string, password: string) {
-  return database<User>("users")
-    .where({ email })
-    .select("password", "id", "password_version")
-    .first()
-    .then(async (user) => {
+
+  return prisma.user.findFirst(
+    {
+      where: {email},
+      select: {password: true, id: true, passwordVersion: true}
+    })
+    .then(async user => {
       if (!user) {
         throw { statusCode: 401, message: "Invalid email or password!" };
       }
@@ -107,11 +104,11 @@ export async function authenticateUser(email: string, password: string) {
         throw { statusCode: 401, message: "Invalid email or password!" };
       }
       return user;
-    })
+    })    
     .catch(err => {
       throw {
         statusCode: 500,
-        message: "Something went wrong when finding from the database.",
+        message: "Something went wrong when getting from the database.",
         ...err
       };
     });

@@ -3,6 +3,6 @@ export interface User {
   email: string
   username: string
   discriminator: string
-  password_version: number
+  passwordVersion: number
   password: string
 }

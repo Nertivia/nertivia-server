@@ -15,7 +15,7 @@ export const login = async (req: Request, res: Response) => {
   User.authenticateUser(email, password)
   .then(user => {
     // Generate a jwt then return to client for login
-    const token = generateToken(user.id, user.password_version) // Pass the user id and the password version 
+    const token = generateToken(user.id, user.passwordVersion) // Pass the user id and the password version 
     return res.json({ token });
   })
   .catch((err: User.ReturnError) => {

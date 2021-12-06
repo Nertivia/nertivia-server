@@ -40,7 +40,7 @@ async function getUser(id: string) {
 type DecodeToken = {id: string, passwordVersion: number}
 
 function checkValidUser(decodedToken: DecodeToken, user: Partial<User>) {
-  if (decodedToken.passwordVersion !== user.password_version) {
+  if (decodedToken.passwordVersion !== user.passwordVersion) {
     return FAIL_MESSAGE.INVALID_TOKEN
   }
   // do more checks in the future. eg suspended.
@@ -51,6 +51,6 @@ function checkValidUser(decodedToken: DecodeToken, user: Partial<User>) {
 function filterUserValues(user: User): Partial<User> & {id: string} {
   return {
     id: user.id,
-    password_version: user.password_version,
+    passwordVersion: user.passwordVersion,
   }
 }

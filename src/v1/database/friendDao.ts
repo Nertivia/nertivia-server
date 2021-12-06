@@ -1,10 +1,8 @@
-import database from "../../database/database";
+import { request } from "express";
+import prisma from "../../database";
+import database from "../../database";
 import {getUser} from "../database/userDao";
-interface Friend {
-  requester_id: string;
-  recipient_id: string;
-  status: Status;
-}
+
 enum Status {
   Incoming = 0,
   Outgoing = 1,
@@ -20,26 +18,37 @@ export async function addFriend(requesterId: string, recipientId: string) {
   if (!recipientUser) {
     throw { statusCode: 404, message:"Invalid recipient id."}
   }
+
+  
   // check if already exists.
-  const existingFriend = await database<Friend>("friends")
-    .where({ requester_id: requesterId, recipient_id: recipientId })
-    .select("status")
-    .first();
+  const existingFriend = await prisma.friend.findFirst({
+    where: {requesterId, recipientId},
+    select: {status: true}
+  })
   if (existingFriend) {
     throw handleError(existingFriend.status)
   }
+
   // insert 
   const insertRequester = {
-    requester_id: requesterId,
-    recipient_id: recipientId,
+    requesterId,
+    recipientId,
     status: Status.Outgoing
   }
   const insertRecipient = {
-    requester_id: recipientId,
-    recipient_id: requesterId,
+    recipientId: requesterId,
+    requesterId: recipientId,
     status: Status.Incoming
   }
-  await database<Friend>("friends").insert([insertRequester, insertRecipient])
+
+
+  console.log(insertRequester, insertRecipient)
+
+  await prisma.friend.createMany({
+    data: [insertRequester, insertRecipient]
+  }).catch(err => {
+    console.log(err)
+  })
   return recipientUser
 }
 function handleError(status: Status) {
@@ -50,8 +59,9 @@ function handleError(status: Status) {
 }
 
 export async function getFriends(userId: string) {
-  return database<Friend>("friends")
-    .join('users', 'users.id', 'friends.recipient_id')
-    .select("friends.status", "users.username", "users.discriminator", "users.id")
-    .where({requester_id: userId})
+
+  return prisma.friend.findMany({where: {requesterId: userId}, select: {
+    recipient: {select: {id: true, username: true, discriminator: true} },
+    status: true,
+  }})
 }
