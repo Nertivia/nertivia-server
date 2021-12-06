@@ -42,12 +42,9 @@ export async function addFriend(requesterId: string, recipientId: string) {
   }
 
 
-  console.log(insertRequester, insertRecipient)
 
   await prisma.friend.createMany({
     data: [insertRequester, insertRecipient]
-  }).catch(err => {
-    console.log(err)
   })
   return recipientUser
 }

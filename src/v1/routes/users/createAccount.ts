@@ -24,8 +24,7 @@ export const createAccount = async (req: Request, res: Response) => {
   .then(id => {
     const token = generateToken(id, 0) // User id, password version = 0
     return res.json({ token }); // Return the created jwt to the client
-  }).catch((err: User.ReturnError) => {
-    console.log(err)
+  }).catch((err: User.ReturnError) => 
     res.status(err.statusCode).json({message: err.message})
-  })
+  )
 };

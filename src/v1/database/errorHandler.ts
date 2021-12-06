@@ -1,3 +1,4 @@
+// TODO: migrate this to prisma. 
 export default function handlePostgreError (err: any): {statusCode: number, message: string} | undefined{
 	if (err) {
 		if (err.code === '42P01') {
