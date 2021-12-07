@@ -21,7 +21,7 @@ module.exports = function() {
 		});
 
 		describe(`POST /api/${apiVersion}/users/login`, function() {
-			it('login to the user', function(done) {
+			it('login with bad data', function(done) {
 			  request.post(`/api/${apiVersion}/users/login`)
 				.send({})
 				.expect(400)

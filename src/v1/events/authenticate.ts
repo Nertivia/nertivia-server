@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+import { emitToUser, joinRoom } from "../../socket";
 import { ServerEvent } from "../constants/ServerEvent";
 import { getFriends } from "../database/friendDao";
 import { getUser } from "../database/userDao";
@@ -22,9 +23,12 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
   const friends = await getFriends(user.id);
 
 
+  await joinRoom(socket.id, `user-${user.id}`)
 
-  socket.emit(ServerEvent.AUTHORIZED, {
+
+  emitToUser(socket.id, ServerEvent.AUTHORIZED, {
     me,
     friends
   })
+
 }

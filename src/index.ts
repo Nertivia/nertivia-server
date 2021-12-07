@@ -23,8 +23,8 @@ app.all("*", (req, res) => {
 });
 
 async function startServer() {
-  configureIoServer(server);
   await connectRedis();
+  configureIoServer(server);
   server.listen(env.PORT, () => {
     console.log(`Listening on port *:${env.PORT}`);
   });
