@@ -46,8 +46,9 @@ jobs:
           
       - run: npm ci
       - run: npm run build
-      - run: npm run knex:migrate:latest
+      - run: npm run prisma:deploy
         env:
+          POSTGRES_URL: "postgresql://nertivia:test123@postgres:5432/nertivia"
           POSTGRES_DB: nertivia
           POSTGRES_USER: nertivia
           POSTGRES_PASSWORD: test123
@@ -62,6 +63,7 @@ jobs:
         
       - run: npm test
         env:
+          POSTGRES_URL: "postgresql://nertivia:test123@postgres:5432/nertivia"
           POSTGRES_DB: nertivia
           POSTGRES_USER: nertivia
           POSTGRES_PASSWORD: test123
