@@ -76,7 +76,7 @@ export async function acceptFriend(requesterId: string, recipientId: string) {
     data: {
       status: Status.Friends
     }
-  }).then(val => console.log(val));
+  })
   return recipientUser;
 
 }
