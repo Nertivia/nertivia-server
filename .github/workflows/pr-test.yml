@@ -48,7 +48,7 @@ jobs:
       - run: npm run build
       - run: npm run prisma:deploy
         env:
-          POSTGRES_URL: "postgresql://postgres:test123@localhost:5432/nertivia"
+          POSTGRES_URL: "postgresql://postgres:test123@postgres:5432/nertivia"
           POSTGRES_DB: nertivia
           POSTGRES_USER: nertivia
           POSTGRES_PASSWORD: test123
