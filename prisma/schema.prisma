@@ -41,12 +41,12 @@ model Guild {
 
 
 model Friend {
-  @@unique([recipientId, requesterId])
+  id           Int       @id @default(autoincrement())
   requesterId  String
   recipientId  String
-  requester    User    @relation("friends", fields: [requesterId], references: [id])
-  recipient    User    @relation("recipientFriends", fields: [recipientId], references: [id])
-  status       Int     // incoming | outgoing | friends | blocked
+  requester    User      @relation("friends", fields: [requesterId], references: [id])
+  recipient    User      @relation("recipientFriends", fields: [recipientId], references: [id])
+  status       Int       // incoming | outgoing | friends | blocked
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
