@@ -46,7 +46,7 @@ jobs:
           
       - run: npm ci
       - run: npm run build
-      - run: npm run prisma:migrate
+      - run: npm run prisma:deploy
         env:
           POSTGRES_DB: nertivia
           POSTGRES_USER: nertivia
