@@ -37,7 +37,7 @@ function registerEvents(socket: Socket, events: {[key: string]: (data: any, sock
 
 // type RoomKey<Str extends string> = `id-${Lowercase<Str>}`
 type attrs = "user" | "server";
-type RoomKey = `${attrs}-${string}`;
+export type RoomKey = `${attrs}-${string}`;
 
 
 // join room
@@ -48,6 +48,12 @@ export function joinRoom(socketId: string, name: RoomKey) {
 export function emitToRoom(name: RoomKey, event: ServerEvent, data: any) {
   return io?.in(name).emit(event, data);
 }
+export function emitToRooms(names: RoomKey[], event: ServerEvent, data: any) {
+  return io?.in(names).emit(event, data);
+}
 export function emitToUser(id: string, event: ServerEvent, data: any) {
   return io?.in(id).emit(event, data);
+}
+export function emitToUsers(ids: string[], event: ServerEvent, data: any) {
+  return io?.in(ids).emit(event, data);
 }

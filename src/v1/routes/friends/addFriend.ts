@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { emitToRoom, RoomKey } from "../../../socket";
+import { ServerEvent } from "../../constants/ServerEvent";
 import * as Friend from "../../database/friendDao";
 import { getUserByTag } from "../../database/userDao";
 
@@ -19,12 +21,18 @@ export const addFriend = async (req: Request, res: Response) => {
     res.status(404).json({ message: "User not found." });
     return;
   }
-  if (body.id === req.user.id) {
+  if (body.id === req.cache.user.id) {
     res.status(400).json({ message: "Cannot add yourself." });
     return;
   }
   Friend
-    .addFriend(req.user.id, body.id)
-    .then((recipient) => res.json({ recipient }))
+    .addFriend(req.cache.user.id, body.id)
+    .then((recipient) => {
+      const requesterId: RoomKey = `user-${req.cache.user.id}`;
+      const recipientRoom: RoomKey = `user-${body.id}`;
+      emitToRoom(requesterId, ServerEvent.FRIEND_REQUEST_CREATED, {recipient, status: Friend.Status.Outgoing})
+      emitToRoom(recipientRoom, ServerEvent.FRIEND_REQUEST_CREATED, {recipient: req.cache.user, status: Friend.Status.Incoming})
+      res.json({ recipient })
+    })
     .catch((err) => res.status(err.statusCode).json({ message: err.message }));
 };

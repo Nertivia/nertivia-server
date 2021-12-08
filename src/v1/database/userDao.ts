@@ -93,7 +93,7 @@ export async function authenticateUser(email: string, password: string) {
   return prisma.user.findFirst(
     {
       where: {email},
-      select: {password: true, id: true, passwordVersion: true}
+      select: {username: true, discriminator: true, password: true, id: true, passwordVersion: true}
     })
     .then(async user => {
       if (!user) {

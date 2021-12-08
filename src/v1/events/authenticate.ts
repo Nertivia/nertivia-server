@@ -13,17 +13,17 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
     socket.disconnect(true);
     return;
   }
-  const user = await authenticate(data.token).catch(err => {
+  const cache = await authenticate(data.token).catch(err => {
     socket.emit(ServerEvent.AUTHENTICATE_ERROR, {message: err.message});
     socket.disconnect(true);
   })
-  if (!user) return;
-  const me = await getUser(user.id);
+  if (!cache) return;
+  const me = await getUser(cache.user.id);
 
-  const friends = await getFriends(user.id);
+  const friends = await getFriends(cache.user.id);
 
 
-  await joinRoom(socket.id, `user-${user.id}`)
+  await joinRoom(socket.id, `user-${cache.user.id}`)
 
 
   emitToUser(socket.id, ServerEvent.AUTHORIZED, {

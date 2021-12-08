@@ -27,14 +27,14 @@ export async function authenticate(token: string) {
 
 async function getUser(id: string) {
   // Check in cache
-  const cachedUser = await getCachedUser(id);
+  let cachedUser = await getCachedUser(id);
   if (cachedUser) return cachedUser;
   
   // check in database
   const dbUser = await getUserAll(id)
   if (!dbUser) return null;
-  await addCachedUser(filterUserValues(dbUser));
-  return dbUser
+  cachedUser = await addCachedUser(dbUser);
+  return cachedUser
 }
 
 type DecodeToken = {id: string, passwordVersion: number}
@@ -47,10 +47,3 @@ function checkValidUser(decodedToken: DecodeToken, user: Partial<User>) {
   return true;
 }
 
-
-function filterUserValues(user: User): Partial<User> & {id: string} {
-  return {
-    id: user.id,
-    passwordVersion: user.passwordVersion,
-  }
-}

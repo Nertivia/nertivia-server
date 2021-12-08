@@ -1,7 +1,7 @@
 import prisma from "../../database";
 import {getUser} from "../database/userDao";
 
-enum Status {
+export enum Status {
   Incoming = 0,
   Outgoing = 1,
   Friends = 2,
@@ -47,7 +47,7 @@ export async function addFriend(requesterId: string, recipientId: string) {
   return recipientUser
 }
 
-export async function acceptFriend(requesterId: string, recipientId: string) {
+export async function acceptFriend(acceptedId: string, recipientId: string) {
   // check if recipient exists
   const recipientUser = await getUser(recipientId);
   if (!recipientUser) {
@@ -55,7 +55,7 @@ export async function acceptFriend(requesterId: string, recipientId: string) {
   }
 
   const friendRequest = await prisma.friend.findFirst({
-    where: {requesterId, recipientId},
+    where: {requesterId: acceptedId, recipientId},
     select: {status: true}
   })
   if (!friendRequest) {
@@ -69,8 +69,8 @@ export async function acceptFriend(requesterId: string, recipientId: string) {
   await prisma.friend.updateMany({
     where: {
       OR: [
-        {recipientId, requesterId},
-        {recipientId: requesterId, requesterId: recipientId},
+        {recipientId, requesterId: acceptedId},
+        {recipientId: acceptedId, requesterId: recipientId},
       ]
     },
     data: {

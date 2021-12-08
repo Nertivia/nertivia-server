@@ -18,8 +18,8 @@ export default function authenticateMiddleware(options?: Options) {
     if (!token) {
       return res.status(401).json({message: "Token not provided in the header."})
     }
-    authenticate(token).then(user => {
-      res.req.user = user;
+    authenticate(token).then(cachedUser => {
+      req.cache = cachedUser;
       next()
     }).catch(err => 
       res.status(err.statusCode).json({message: err.message})
