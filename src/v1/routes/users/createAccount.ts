@@ -3,12 +3,20 @@ import { Request, Response } from "express";
 import { isEmailValid } from "../../utils/email";
 import { createUser } from '../../database/userDao';
 import * as User from '../../database/userDao';
+import { ValidateData } from '../../utils/ValidateData';
 
 export const createAccount = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
-  if (!email || !username || !password) {
-    return res.status(400).send({ message: "You must provide an email, username, and password" });
-  }
+
+
+  const errors = new ValidateData(req.body)
+    .string("email", {min: 3, max: 100, required: true})
+    .string("username", {min: 3, max: 30, required: true})
+    .string("password", {min: 3, max: 100, required: true})
+    .done(res)
+    
+  if (errors) return;
+
 
   if (!await isEmailValid(email)) {
     return res.status(400).send({ message: "The email you provided is not valid" });
@@ -28,3 +36,5 @@ export const createAccount = async (req: Request, res: Response) => {
     res.status(err.statusCode).json({message: err.message})
   )
 };
+
+
