@@ -1,11 +1,11 @@
 import prisma from "../../database";
 import {getUser} from "../database/userDao";
+import { checkBlocked } from "./blockedUsersDao";
 
 export enum Status {
   Incoming = 0,
   Outgoing = 1,
-  Friends = 2,
-  Blocked = 3,
+  Friends = 2
 }
 
 
@@ -17,6 +17,11 @@ export async function addFriend(requesterId: string, recipientId: string) {
     throw { statusCode: 404, message:"Invalid recipient id."}
   }
   
+  const isBlocked = await checkBlocked(requesterId, recipientId);
+
+  if (isBlocked) {
+    throw {statusCode: 400, message: "User is blocked."};
+  }
   
   // check if already exists.
   const existingFriend = await prisma.friend.findFirst({
@@ -81,8 +86,27 @@ export async function acceptFriend(acceptedId: string, recipientId: string) {
 
 }
 
+
+export async function blockFriend(requesterId: string, recipientId: string) {
+  // check if recipient exists
+  const recipientUser = await getUser(recipientId);
+  if (!recipientUser) {
+    throw { statusCode: 404, message: "Invalid recipient id."}
+  }
+
+  await prisma.$transaction([
+    prisma.friend.deleteMany({where: {AND: [{recipientId, requesterId}, {recipientId: requesterId, requesterId: recipientId}]}}),
+    prisma.blockedUser.create({
+      data: {
+        blockerId: requesterId,
+        blockedId: recipientId
+      }
+    })
+  ])
+
+}
+
 function handleError(status: Status) {
-  if (status === Status.Blocked) return {statusCode: 400, message: "User is blocked."}
   if (status === Status.Incoming) return {statusCode: 400, message: "Accept the friend request."}
   if (status === Status.Outgoing) return {statusCode: 400, message: "Request already sent."}
   if (status === Status.Friends) return {statusCode: 400, message: "Already friends."}
