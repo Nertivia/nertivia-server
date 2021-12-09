@@ -42,7 +42,7 @@ module.exports = function() {
 			it('Sends bad data to try crash the server', function(done) {
 				request.post(`/api/${apiVersion}/users/create`)
 				.send({})
-				.expect([400, 422])
+				.expect(400)
 				.end(function(err, res) {
 					if(err) {
 						console.log("ERR", res.body)

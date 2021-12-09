@@ -36,7 +36,7 @@ export class ValidateData {
   }
   done(res?: Response) {
     if (Object.keys(this.errors).length) {
-      res?.status(422).json(this.errors);
+      res?.status(400).json(this.errors);
       return this.errors;
     }
     return null;
