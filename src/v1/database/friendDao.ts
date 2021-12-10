@@ -86,6 +86,21 @@ export async function acceptFriend(acceptedId: string, recipientId: string) {
 
 }
 
+export async function removeFriend(requesterId: string, recipientId: string) {
+  // check if friends
+  const existingFriend = await prisma.friend.findFirst({
+    where: {requesterId, recipientId},
+    select: {status: true}
+  })
+
+  if (!existingFriend) {
+    throw { statusCode: 404, message: "You are not friends with the recipient."}
+  }
+  await prisma.friend.deleteMany({where: {AND: [{recipientId, requesterId}, {recipientId: requesterId, requesterId: recipientId}]}})
+
+  return true;
+
+}
 
 export async function blockFriend(requesterId: string, recipientId: string) {
   // check if recipient exists
@@ -103,6 +118,7 @@ export async function blockFriend(requesterId: string, recipientId: string) {
       }
     })
   ])
+  return true;
 
 }
 
