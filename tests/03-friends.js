@@ -1,6 +1,6 @@
 module.exports = function() {
   describe('Friends', () => {
-    describe(`POST /api/${apiVersion}/friends/add`, function() {
+    describe(`POST /api/${apiVersion}/relationships/friends/add`, function() {
       it('Add a friend and check for the events for both users.', function(done) {
         let eventRunCount = 0;
         global.io.on('friend_request_created', (data) => {
@@ -11,7 +11,7 @@ module.exports = function() {
           eventRunCount++
           eventRunCount === 2 && done()
         })
-          request.post(`/api/${apiVersion}/friends/add`)
+          request.post(`/api/${apiVersion}/relationships/friends/add`)
           .send({id: global.me2.id})
           .set('Authorization', global.userToken)
           .expect(200)

@@ -102,12 +102,22 @@ export async function removeFriend(requesterId: string, recipientId: string) {
 
 }
 
-export async function blockFriend(requesterId: string, recipientId: string) {
+export async function blockUser(requesterId: string, recipientId: string) {
   // check if recipient exists
   const recipientUser = await getUser(recipientId);
   if (!recipientUser) {
     throw { statusCode: 404, message: "Invalid recipient id."}
   }
+  
+  const isAlreadyBlocked = await prisma.blockedUser.findFirst({where: {blockerId: requesterId}})
+  if (isAlreadyBlocked) {
+    throw {statusCode: 400, message: "Already blocked."}
+  }
+
+  const isFriends = await prisma.friend.findFirst({
+    where: {requesterId, recipientId},
+    select: {status: true}
+  })
 
   await prisma.$transaction([
     prisma.friend.deleteMany({where: {AND: [{recipientId, requesterId}, {recipientId: requesterId, requesterId: recipientId}]}}),
@@ -118,7 +128,9 @@ export async function blockFriend(requesterId: string, recipientId: string) {
       }
     })
   ])
-  return true;
+
+  return {wereFriends: isFriends ? true : false};
+
 
 }
 
