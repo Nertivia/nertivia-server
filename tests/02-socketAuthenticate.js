@@ -1,7 +1,7 @@
 const io = require("socket.io-client");
 module.exports = function() {
 
-    describe('Socket Authentication', () => {
+  describe('Socket Authentication', () => {
 			before((done) => {
 					global.io = io(`http://localhost:80`, {transports: ["websocket"]});
 					global.io.on("connect", done);

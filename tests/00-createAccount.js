@@ -1,5 +1,5 @@
 module.exports = function() {
-    describe('Create Account', () => {
+  describe('Create Account', () => {
 		describe(`POST /api/${apiVersion}/users/create`, function() {
 			it('Creates a user', function(done) {
 				global.email = Math.random() + "@test.com"
