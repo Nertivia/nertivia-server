@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { emitToRoom, emitToRooms, emitToUser, RoomKey } from "../../../socket";
+import { emitToRoom, emitToRooms, emitToUser, RoomKey } from "../../../common/socket";
 import { ServerEvent } from "../../constants/ServerEvent";
-import * as Friend from "../../database/friendDao";
-import { getUserByTag } from "../../database/userDao";
+import * as Friend from "../../database/Friend";
+import { getUserByTag } from "../../database/User";
 import { ValidateData } from "../../utils/ValidateData";
 
 interface ResponseBody {

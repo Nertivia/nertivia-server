@@ -1,6 +1,6 @@
-import prisma from "../../database";
-import {getUser} from "../database/userDao";
-import { checkBlocked } from "./blockedUsersDao";
+import prisma from "../../common/database";
+import {getUser} from "./User";
+import { checkBlocked } from "./BlockedUser";
 
 export enum Status {
   Incoming = 0,

@@ -1,8 +1,8 @@
 import { generateToken } from '../../utils/token';
 import { Request, Response } from "express";
 import { isEmailValid } from "../../utils/email";
-import { createUser } from '../../database/userDao';
-import * as User from '../../database/userDao';
+import { createUser } from '../../database/User';
+import * as User from '../../database/User';
 import { ValidateData } from '../../utils/ValidateData';
 
 export const createAccount = async (req: Request, res: Response) => {

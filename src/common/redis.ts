@@ -1,5 +1,5 @@
 import {createClient, RedisClient} from 'redis';
-import env from './env';
+import env from '../env';
 
 let client: RedisClient | null = null;
 

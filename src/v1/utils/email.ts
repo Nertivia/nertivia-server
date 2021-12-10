@@ -1,5 +1,5 @@
 import fs from 'fs';
-import validTlds from '../../validTlds';
+import validTlds from '../../common/validTlds';
 const emailRegex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 
 export async function isEmailValid(email: string): Promise<boolean> {

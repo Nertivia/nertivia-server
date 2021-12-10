@@ -2,8 +2,8 @@ import env from "./env";
 import express from "express";
 import { router as routerV1 } from "./v1/app";
 import http from 'http';
-import { connectRedis } from "./redis";
-import { configureIoServer } from "./socket";
+import { connectRedis } from "./common/redis";
+import { configureIoServer } from "./common/socket";
 
 const app = express();
 

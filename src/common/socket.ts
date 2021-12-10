@@ -1,8 +1,8 @@
 import http from 'http';
 import socket, { Socket } from 'socket.io';
-import { ServerEvent } from './v1/constants/ServerEvent';
+import { ServerEvent } from '../v1/constants/ServerEvent';
 import { createAdapter, RedisAdapter } from '@socket.io/redis-adapter';
-import v1Events from './v1/events/events';
+import v1Events from '../v1/events/events';
 import {redisClient} from './redis'
 
 let io:socket.Server | null;

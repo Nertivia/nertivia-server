@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
-import { emitToUser, joinRoom } from "../../socket";
+import { emitToUser, joinRoom } from "../../common/socket";
 import { ServerEvent } from "../constants/ServerEvent";
-import { getFriends } from "../database/friendDao";
-import { getUser } from "../database/userDao";
+import { getFriends } from "../database/Friend";
+import { getUser } from "../database/User";
 import {authenticate} from '../utils/authenticate';
 interface Data {
   token: string;

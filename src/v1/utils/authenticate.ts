@@ -1,7 +1,7 @@
 import { decodeToken } from "./token"
 import {addCachedUser, getCachedUser} from "../cache/userCache";
 import { User } from "../interface/User";
-import { getUserAll } from "../database/userDao";
+import { getUserAll } from "../database/User";
 
 
 const FAIL_MESSAGE = {

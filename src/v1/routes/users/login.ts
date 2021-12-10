@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { generateToken } from "../../utils/token";
-import * as User from "../../database/userDao";
+import * as User from "../../database/User";
 import { ValidateData } from "../../utils/ValidateData";
 
 export const login = async (req: Request, res: Response) => {

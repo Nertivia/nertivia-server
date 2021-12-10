@@ -1,4 +1,4 @@
-import { redisClient } from "../../redis";
+import { redisClient } from "../../common/redis";
 import { User } from "../interface/User";
 
 

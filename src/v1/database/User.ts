@@ -1,10 +1,10 @@
-import database from "../../database";
+import database from "../../common/database";
 import { User } from "../interface/User";
 import FlakeId from "@brecert/flakeid";
 import bcrypt from "bcrypt";
 import { randomLetterNumber } from "../utils/random";
 import handlePostgresError from "./errorHandler";
-import prisma from "../../database";
+import prisma from "../../common/database";
 
 const flake = new FlakeId({
   mid: 42,
