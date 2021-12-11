@@ -17,7 +17,13 @@ export function configureIoServer(server: http.Server) {
   io.adapter(createAdapter(redisClient(), redisClient()?.duplicate()))
 
 
-  io.on('connection', socket => {
+  io.on('connection', (socket: Socket) => {
+    setTimeout(function () {
+      if (!socket.auth) {
+        socket.emit(ServerEvent.AUTHENTICATE_ERROR, "Token Timeout!");
+        socket.disconnect(true);
+      }
+    }, 10000);
     registerEvents(socket, v1Events)
   })
 }
