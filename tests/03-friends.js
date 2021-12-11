@@ -12,7 +12,7 @@ module.exports = function() {
           eventRunCount === 2 && done()
         })
           request.post(`/api/${apiVersion}/relationships/friends/add`)
-          .send({id: global.me2.id})
+          .send({id: global.user2.id})
           .set('Authorization', global.userToken)
           .expect(200)
           .end(function(err, res) {
