@@ -19,7 +19,7 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
   })
   if (!cache) return;
   socket.auth = true;
-  const me = await getUser(cache.user.id);
+  const user = await getUser(cache.user.id);
 
   const friends = await getFriends(cache.user.id);
 
@@ -28,7 +28,7 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
 
 
   emitToUser(socket.id, ServerEvent.AUTHORIZED, {
-    me,
+    user,
     friends
   })
 

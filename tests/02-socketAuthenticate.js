@@ -24,7 +24,7 @@ module.exports = function() {
 			it('Login using socket io.', function(done) {
 				global.io.on("authenticate_error", (err) => done(new Error(err.message)));
 				global.io.on("authorized", (data) => {
-					global.me = data.me;
+					global.user = data.user;
 					done()
 				})
 				global.io.emit("authenticate", {token: global.userToken});
@@ -35,7 +35,7 @@ module.exports = function() {
 			it('Login using socket io with second account.', function(done) {
 				global.io2.on("authenticate_error", (err) => done(new Error(err.message)));
 				global.io2.on("authorized", (data) => {
-					global.me2 = data.me;
+					global.user2 = data.user;
 					done()
 				})
 				global.io2.emit("authenticate", {token: global.userToken2});
