@@ -5,8 +5,10 @@ services:
         restart: unless-stopped
         depends_on:
             - postgres
+            - redis
         links:
             - postgres
+            - redis
         networks:
             - backend
         env_file:
@@ -20,23 +22,27 @@ services:
         restart: always
         ports:
             # <Port exposed> : < Port inside container>
-            - '5433:5432'
+            - '5432:5432'
         expose:
             # Opens port 5433 on the container
-            - '5433'
+            - '5432'
         volumes:
             - database-data:/var/lib/postgresql/data/
-        env_file: 
+        env_file:
             - .env
         networks:
             - backend
     redis:
-      image: redis:6.2.6
-      restart: always
-      ports:
-        - "6379:6379"
-      expose:
-        - "6379"
+        image: redis:6.2.6
+        restart: always
+        ports:
+            - "6379:6379"
+        expose:
+            - "6379"
+        env_file:
+            - .env
+        networks:
+            - backend
 networks:
     backend:
         driver: bridge
