@@ -3,6 +3,7 @@
 Creating Nertivia server from scratch. The current version is here: <https://github.com/supertiger1234/Nertivia-Server>
 
 ## Stack
+
 - Express
 - Socket.IO
 - PostgreSQL
