@@ -18,6 +18,7 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
     socket.disconnect(true);
   })
   if (!cache) return;
+  socket.auth = true;
   const me = await getUser(cache.user.id);
 
   const friends = await getFriends(cache.user.id);

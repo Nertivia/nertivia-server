@@ -65,16 +65,5 @@ module.exports = function() {
 				global.io4.emit("authenticate", {});
 			});
 		})
-
-		/*describe('Connect but dont autheniticate', () => {
-			it('Login using socket io with no data.', function(done) {
-				global.io5.on("authenticate_error", (err) => done());
-				global.io5.on("authorized", (data) => {
-					done(new Error("Should not be authorized."))
-				})
-			});
-		})*/
-
-		// TODO: Kick a user if they are not authenitcated after a certain amount of time.
 	})
 };

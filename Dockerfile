@@ -17,6 +17,9 @@ COPY . .
 
 RUN npm run build
 
+RUN npm run prisma:deploy
+RUN npx prisma generate
+
 # get rid of development modules used for compiling the typescript build files
 RUN npm prune --production
 
