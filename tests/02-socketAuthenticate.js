@@ -18,10 +18,6 @@ module.exports = function() {
 				global.io4 = io(`http://localhost:${process.env.PORT}`, {transports: ["websocket"]});
 				global.io4.on("connect", done);
 			})
-			before(done => {
-				global.io5 = io(`http://localhost:${process.env.PORT}`, {transports: ["websocket"]});
-				global.io5.on("connect", done);
-			})
 
 
 		describe('Authenticate user 1', () => {
