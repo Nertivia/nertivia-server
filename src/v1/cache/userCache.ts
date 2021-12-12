@@ -53,14 +53,13 @@ export async function removeConnectedUser(userId: string, socketId: string) {
   const multi = redisClient
     .multi()
     .sRem(socketKey, socketId)
+    .del(userKey)
     
   if (count <= 1) {
-    multi.del(userKey)
     // TODO: make user go offline.
   }
   await multi.exec();
-
-
+  
   return count - 1;
 }
 
