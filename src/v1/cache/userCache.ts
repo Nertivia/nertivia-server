@@ -20,24 +20,58 @@ export function constructCachedUser(user: Partial<User>) : CacheUser {
 }
 
 
-export function addCachedUser(user: User ): Promise<CacheUser> {
-  return new Promise((resolve, reject) => {
-    const key = `users:${user.id}`;
-    const cachedUser = constructCachedUser(user);
-    const value = JSON.stringify(cachedUser);
-    redisClient().set(key, value, (err, reply) => {
-      if (err) return reject(err);
-      resolve(cachedUser);
-    });
-  })
+export async function addCachedUser(user: User ): Promise<CacheUser | null> {
+  const key = `user:${user.id}`;
+  const cachedUser = constructCachedUser(user);
+  const value = JSON.stringify(cachedUser);
+  await redisClient.set(key, value);
+  return cachedUser;
 }
-export function getCachedUser(id: string): Promise<null | CacheUser> {
-  return new Promise((resolve, reject) => {
-    const key = `users:${id}`;
-    redisClient().get(key, (err, reply) => {
-      if (err) return reject(err);
-      if (!reply) return resolve(null);
-      resolve(JSON.parse(reply));
-    });
-  })
+export async function getCachedUser(id: string): Promise<null | CacheUser> {
+  const key = `user:${id}`;
+  const cachedUserStr = await redisClient.get(key);
+  if (!cachedUserStr) return null;
+  return JSON.parse(cachedUserStr)
+}
+// add the user and return the count
+export async function addConnectedUser(userId: string, socketId: string) {
+  const socketKey = `connectedSocketIds:${userId}`;
+  const userKey = `connectedUserId:${socketId}`;
+  await redisClient
+    .multi()
+    .sAdd(socketKey, socketId)
+    .set(userKey, userId)
+    .exec();
+  const count = await getConnectedUsersCount(userId);
+  return count
+}
+// remove the user and return count.
+export async function removeConnectedUser(userId: string, socketId: string) {
+  const socketKey = `connectedSocketIds:${userId}`;
+  const userKey = `connectedUserId:${socketId}`;
+  const count = await getConnectedUsersCount(userId);
+  const multi = redisClient
+    .multi()
+    .sRem(socketKey, socketId)
+    
+  if (count <= 1) {
+    multi.del(userKey)
+    // TODO: make user go offline.
+  }
+  await multi.exec();
+
+
+  return count - 1;
+}
+
+export async function getConnectedUsersCount(userId: string): Promise<number> {
+    const key = `connectedSocketIds:${userId}`;
+    const count = await redisClient.sCard(key);
+    return count;
+}
+
+
+export async function getUserIdBySocketId(socketId: string): Promise<string | null> {
+  const key = `connectedUserId:${socketId}`;
+  return redisClient.get(key)
 }

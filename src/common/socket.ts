@@ -14,7 +14,7 @@ export function configureIoServer(server: http.Server) {
       origin: '*'
     }
   });
-  io.adapter(createAdapter(redisClient(), redisClient()?.duplicate()))
+  io.adapter(createAdapter(redisClient, redisClient?.duplicate()))
 
 
   io.on('connection', (socket: Socket) => {
