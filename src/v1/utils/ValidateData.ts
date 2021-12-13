@@ -20,8 +20,16 @@ export class ValidateData {
     const value = this.data[key];
     if (options.required && value === undefined) this.errors[key] = key + " is required.";
     if (value && typeof value !== "string") this.errors[key] = key + " is not a string.";
-    if (value && options.max && value.length > options.max) this.errors[key] = key + " is longer than " + options.max + " characters.";
-    if (value && options.min && value.length < options.min) this.errors[key] = key + " is shorter than " + options.min + " characters.";
+    if (value && options.max !== undefined && value.length > options.max) this.errors[key] = key + " is longer than " + options.max + " characters.";
+    if (value && options.min !== undefined && value.length < options.min) this.errors[key] = key + " is shorter than " + options.min + " characters.";
+    return this;
+  }
+  number(key: string, options: StringOptions) {
+    const value = this.data[key];
+    if (options.required && value === undefined) this.errors[key] = key + " is required.";
+    if (value && typeof value !== "number") this.errors[key] = key + " is not a number.";
+    if (value && options.max !== undefined && value > options.max) this.errors[key] = key + " must be less than " + options.max + ".";
+    if (value && options.min !== undefined && value < options.min) this.errors[key] = key + " must be greater than " + options.min + ".";
     return this;
   }
   object(key: string, callback: (validate: ValidateData) => void) {

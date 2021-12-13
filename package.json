@@ -10,6 +10,7 @@
     "dev": "nodemon src/index.ts",
     "test": "npm run build && mocha tests/test.js --timeout 30000 --reporter spec --exit",
     "lint": "eslint . --ext .ts",
+    "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name",
     "prisma:deploy": "prisma migrate deploy"
   },

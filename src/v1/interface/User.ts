@@ -5,4 +5,5 @@ export interface User {
   discriminator: string
   passwordVersion: number
   password: string
+  presence: number
 }

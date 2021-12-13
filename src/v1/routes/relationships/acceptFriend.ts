@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { emitToRoom, emitToRooms, emitToUser, RoomKey } from "../../../common/socket";
+import { emitToRoom } from "../../../common/socket";
 import { ServerEvent } from "../../constants/ServerEvent";
 import * as Friend from "../../database/Friend";
 import { getUserByTag } from "../../database/User";
@@ -35,8 +35,8 @@ export const acceptFriend = async (req: Request, res: Response) => {
   Friend
     .acceptFriend(req.cache.user.id, body.id)
     .then((recipient) => {
-      const accepterRoom: RoomKey = `user-${req.cache.user.id}`;
-      const recipientRoom: RoomKey = `user-${body.id}`;
+      const accepterRoom = req.cache.user.id;
+      const recipientRoom = body.id as string;
       emitToRoom(accepterRoom, ServerEvent.FRIEND_ACCEPTED, {id: body.id})
       emitToRoom(recipientRoom, ServerEvent.FRIEND_ACCEPTED, {id: req.cache.user.id})
       res.json(recipient)

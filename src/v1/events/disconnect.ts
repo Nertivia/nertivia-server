@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { getCachedUser, getUserIdBySocketId, removeConnectedUser } from "../cache/userCache";
+import emitUserPresence from "../utils/emitUserPresence";
 
 
 export default async function authenticateEvent(data: any, socket: Socket) {
@@ -7,7 +8,10 @@ export default async function authenticateEvent(data: any, socket: Socket) {
   if (!userId) return;
   const connectedCount = await removeConnectedUser(userId, socket.id);
   if (connectedCount === 0) {
-    // TODO: emit event to everyone to indicate user event offline.
+    await emitUserPresence({
+      presence: 0,
+      userId,
+    })
   }
 
 }

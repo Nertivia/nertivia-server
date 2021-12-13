@@ -9,7 +9,6 @@ export enum Status {
 }
 
 
-
 export async function addFriend(requesterId: string, recipientId: string) {
   // check if recipient exists
   const recipientUser = await getUser(recipientId);

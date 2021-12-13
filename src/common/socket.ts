@@ -41,20 +41,17 @@ function registerEvents(socket: Socket, events: {[key: string]: (data: any, sock
   }
 }
 
-// type RoomKey<Str extends string> = `id-${Lowercase<Str>}`
-type attrs = "user" | "server";
-export type RoomKey = `${attrs}-${string}`;
 
 
 // join room
-export function joinRoom(socketId: string, name: RoomKey) {
+export function joinRoom(socketId: string, name: string) {
   return adapter().remoteJoin(socketId, name)
 }
 
-export function emitToRoom(name: RoomKey, event: ServerEvent, data: any) {
+export function emitToRoom(name: string, event: ServerEvent, data: any) {
   return io?.in(name).emit(event, data);
 }
-export function emitToRooms(names: RoomKey[], event: ServerEvent, data: any) {
+export function emitToRooms(names: string[], event: ServerEvent, data: any) {
   return io?.in(names).emit(event, data);
 }
 export function emitToUser(id: string, event: ServerEvent, data: any) {

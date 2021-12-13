@@ -22,6 +22,13 @@ interface CreateUser {
   password: string;
 }
 
+export enum Presence {
+  OFFLINE = 0,
+  ONLINE = 1,
+  AWAY = 2,
+  BUSY = 3,
+}
+
 
 // Creates an account and then returns the id.
 export async function createUser(details: CreateUser) {
@@ -35,7 +42,8 @@ export async function createUser(details: CreateUser) {
       username: details.username,
       discriminator: randomLetterNumber(4),
       password: hashPassword,
-      passwordVersion: 0
+      passwordVersion: 0,
+      presence: Presence.ONLINE,
     },
     select: { id: true }
   }).then(user => user.id)
@@ -46,6 +54,7 @@ export async function createUser(details: CreateUser) {
     if (handlePostgresError(err)) {
       throw handlePostgresError(err)
     } else{
+      console.log(err)
       throw { statusCode: 500, message: "internal server error" };
     }
   })
@@ -112,4 +121,19 @@ export async function authenticateUser(email: string, password: string) {
         ...err
       };
     });
+}
+
+export async function updatePresence(id: string, presence: Presence) {
+  return prisma.user.update({where: {id}, data: {presence}})
+}
+
+export async function getFriendAndGuildIds(userId: string) {
+  const friends = await prisma.friend.findMany({
+    where: {requesterId: userId},
+    select: {recipientId: true}
+  })
+  const friendIds = friends.map(friend => friend.recipientId);
+  // TODO: get guild ids
+  const guildIds: string[] = [];
+  return [...friendIds, ...guildIds];
 }

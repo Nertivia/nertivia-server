@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { emitToRoom, RoomKey } from "../../../common/socket";
+import { emitToRoom } from "../../../common/socket";
 import { ServerEvent } from "../../constants/ServerEvent";
 import * as Friend from "../../database/Friend";
 import { getUserByTag } from "../../database/User";
@@ -36,8 +36,8 @@ export const blockUser = async (req: Request, res: Response) => {
   Friend
     .blockUser(req.cache.user.id, body.id)
     .then(({wereFriends}) => {
-      const removerRoom: RoomKey = `user-${req.cache.user.id}`;
-      const recipientRoom: RoomKey = `user-${body.id}`;
+      const removerRoom = req.cache.user.id;
+      const recipientRoom = body.id as string;
       emitToRoom(removerRoom, ServerEvent.USER_BLOCKED, {id: body.id})
       if (wereFriends) {
         emitToRoom(recipientRoom, ServerEvent.FRIEND_REMOVED, {id: req.cache.user.id})

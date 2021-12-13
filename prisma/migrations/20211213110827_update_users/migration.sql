@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "presence" INTEGER NOT NULL DEFAULT 1;

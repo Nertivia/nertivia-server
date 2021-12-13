@@ -14,7 +14,7 @@ export async function authenticate(token: string) {
   if (!token) throw FAIL_MESSAGE.INVALID_TOKEN;
   const decodedToken = decodeToken(token);
   if (!decodedToken) throw FAIL_MESSAGE.INVALID_TOKEN;
-  const user = await getUser(decodedToken.id);
+  const user = await getUserFromDbOrCache(decodedToken.id);
   if (!user) throw FAIL_MESSAGE.INVALID_TOKEN;
   const userValidStatus = checkValidUser(decodedToken, user);
   if (userValidStatus === true) {
@@ -25,7 +25,7 @@ export async function authenticate(token: string) {
 }
 
 
-async function getUser(id: string) {
+export async function getUserFromDbOrCache(id: string) {
   // Check in cache
   let cachedUser = await getCachedUser(id);
   if (cachedUser) return cachedUser;

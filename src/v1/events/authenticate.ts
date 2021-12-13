@@ -5,6 +5,7 @@ import { ServerEvent } from "../constants/ServerEvent";
 import { getFriends } from "../database/Friend";
 import { getUser } from "../database/User";
 import {authenticate} from '../utils/authenticate';
+import emitUserPresence from "../utils/emitUserPresence";
 interface Data {
   token: string;
 }
@@ -25,13 +26,17 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
   const friends = await getFriends(cache.user.id);
 
 
-  const connectedCount = await addConnectedUser(cache.user.id, socket.id);
+  await joinRoom(socket.id, cache.user.id)
+  
+  const connectedCount = await addConnectedUser(cache.user.id, socket.id, cache.presence);
   if (connectedCount === 1) {
-    // TODO: emit event to everyone to indicate user event online.
+    await emitUserPresence({
+      presence: cache.presence,
+      userId: cache.user.id,
+    })
   }
 
 
-  await joinRoom(socket.id, `user-${cache.user.id}`)
 
 
   emitToUser(socket.id, ServerEvent.AUTHORIZED, {

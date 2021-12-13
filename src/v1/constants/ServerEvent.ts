@@ -6,4 +6,5 @@ export enum ServerEvent  {
   FRIEND_ACCEPTED = "friend_accepted",
   FRIEND_REMOVED = "friend_accepted",
   USER_BLOCKED = "user_blocked",
+  PRESENCE_CHANGED = "presence_changed",
 }
