@@ -1,7 +1,7 @@
 module.exports = function() {
   describe('Friends', () => {
-    describe(`POST /api/${apiVersion}/relationships/friends/`, function() {
-      it('(/add) Add a friend and check for the events for both users.', function(done) {
+    describe(`POST /api/${apiVersion}/relationships/friends/add`, function() {
+      it('Add a friend and check for the events for both users.', function(done) {
         let eventRunCount = 0;
         global.io.on('friend_request_created', (data) => {
           eventRunCount++
@@ -22,8 +22,9 @@ module.exports = function() {
             }
           });
       });
-
-      it('(/accept) Accept a friend and check for the events for both users.', function(done) {
+    })
+    describe(`POST /api/${apiVersion}/relationships/friends/accept`, function() {
+      it('Accept a friend and check for the events for both users.', function(done) {
         let eventRunCount = 0;
         global.io.on('friend_accepted', (data) => {
           eventRunCount++
@@ -44,6 +45,6 @@ module.exports = function() {
             }
           });
       });
-    });
+    })
   });
 };
