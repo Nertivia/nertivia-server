@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { randomLetterNumber } from "../utils/random";
 import handlePostgresError from "./errorHandler";
 import prisma from "../../common/database";
+import { FriendshipStatus } from "./Friend";
 
 const flake = new FlakeId({
   mid: 42,
@@ -129,7 +130,7 @@ export async function updatePresence(id: string, presence: Presence) {
 
 export async function getFriendAndGuildIds(userId: string) {
   const friends = await prisma.friend.findMany({
-    where: {requesterId: userId},
+    where: {requesterId: userId, status: FriendshipStatus.Friends},
     select: {recipientId: true}
   })
   const friendIds = friends.map(friend => friend.recipientId);

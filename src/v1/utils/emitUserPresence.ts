@@ -23,6 +23,10 @@ export default async function emitUserPresence(opts: Options) {
 
   if (cache.presence === Presence.OFFLINE && opts.presence === Presence.OFFLINE) return;
   
+
+  //emit to self as well.
+  friendAndGuildIds.push(opts.userId)
+  
   emitToRooms(friendAndGuildIds, ServerEvent.PRESENCE_CHANGED, {userId: opts.userId, presence: opts.presence})
   
 

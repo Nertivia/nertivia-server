@@ -42,8 +42,8 @@ export const addFriend = async (req: Request, res: Response) => {
     .then((recipient) => {
       const requesterId = req.cache.user.id;
       const recipientRoom = body.id as string;
-      emitToRoom(requesterId, ServerEvent.FRIEND_REQUEST_CREATED, {recipient, status: Friend.Status.Outgoing})
-      emitToRoom(recipientRoom, ServerEvent.FRIEND_REQUEST_CREATED, {recipient: req.cache.user, status: Friend.Status.Incoming})
+      emitToRoom(requesterId, ServerEvent.FRIEND_REQUEST_CREATED, {recipient, status: Friend.FriendshipStatus.Outgoing})
+      emitToRoom(recipientRoom, ServerEvent.FRIEND_REQUEST_CREATED, {recipient: req.cache.user, status: Friend.FriendshipStatus.Incoming})
       res.json({ recipient })
     })
     .catch((err) => res.status(err.statusCode).json({ message: err.message }));

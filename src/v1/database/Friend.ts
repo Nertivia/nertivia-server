@@ -2,7 +2,7 @@ import prisma from "../../common/database";
 import {getUser} from "./User";
 import { checkBlocked } from "./BlockedUser";
 
-export enum Status {
+export enum FriendshipStatus {
   Incoming = 0,
   Outgoing = 1,
   Friends = 2
@@ -35,12 +35,12 @@ export async function addFriend(requesterId: string, recipientId: string) {
   const insertRequester = {
     requesterId,
     recipientId,
-    status: Status.Outgoing
+    status: FriendshipStatus.Outgoing
   }
   const insertRecipient = {
     recipientId: requesterId,
     requesterId: recipientId,
-    status: Status.Incoming
+    status: FriendshipStatus.Incoming
   }
 
 
@@ -65,7 +65,7 @@ export async function acceptFriend(acceptedId: string, recipientId: string) {
   if (!friendRequest) {
     throw { statusCode: 404, message:"Friend request does not exist."}
   }
-  if (friendRequest.status !== Status.Incoming) {
+  if (friendRequest.status !== FriendshipStatus.Incoming) {
     throw { statusCode: 404, message:"Friend did not send a friend request."}
   }
 
@@ -78,7 +78,7 @@ export async function acceptFriend(acceptedId: string, recipientId: string) {
       ]
     },
     data: {
-      status: Status.Friends
+      status: FriendshipStatus.Friends
     }
   })
   return recipientUser;
@@ -133,10 +133,10 @@ export async function blockUser(requesterId: string, recipientId: string) {
 
 }
 
-function handleError(status: Status) {
-  if (status === Status.Incoming) return {statusCode: 400, message: "Accept the friend request."}
-  if (status === Status.Outgoing) return {statusCode: 400, message: "Request already sent."}
-  if (status === Status.Friends) return {statusCode: 400, message: "Already friends."}
+function handleError(status: FriendshipStatus) {
+  if (status === FriendshipStatus.Incoming) return {statusCode: 400, message: "Accept the friend request."}
+  if (status === FriendshipStatus.Outgoing) return {statusCode: 400, message: "Request already sent."}
+  if (status === FriendshipStatus.Friends) return {statusCode: 400, message: "Already friends."}
 }
 
 export async function getFriends(userId: string) {
