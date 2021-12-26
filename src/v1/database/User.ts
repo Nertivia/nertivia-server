@@ -37,7 +37,7 @@ export async function createUser(details: CreateUser) {
   const id = flake.gen().toString();
 
   return UserModel.create({
-    _id: id,
+    id: id,
     email: details.email,
     username: details.username,
     discriminator: randomLetterNumber(4),

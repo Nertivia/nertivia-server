@@ -17,8 +17,8 @@ export interface User {
 }
 
 const schema = new Schema<User>({
-  _id: { type : String, required : true },
-  id: { type : String},
+  _id: { type : String },
+  id: { type : String, required : true},
 
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true },
@@ -34,7 +34,7 @@ const schema = new Schema<User>({
 
 schema.pre('save', function (next) {      
   if (this.isNew) {
-    this._doc.id = this._id;      
+    this._doc._id = this._doc.id;
   }
   next();
 });
