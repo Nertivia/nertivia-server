@@ -20,8 +20,7 @@ jobs:
       # Label used to access the service container
       mongo:
         # Docker Hub image
-        image: mongo: 5.05
-        # Set health checks to wait until postgres has started
+        image: mongo
       redis:
         # Docker Hub image
         image: redis
