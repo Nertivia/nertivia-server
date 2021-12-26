@@ -16,6 +16,7 @@ export const updatePresence = async (req: Request, res: Response) => {
     return;
   }
 
+  
   emitUserPresence({
     presence,
     userId: req.cache.user.id,

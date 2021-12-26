@@ -22,10 +22,10 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
   if (!cache) return;
   socket.auth = true;
   const user = await getUser(cache.user.id);
-
+  
   const friends = await getFriends(cache.user.id);
-
-
+  
+  
   await joinRoom(socket.id, cache.user.id)
   
   const connectedCount = await addConnectedUser(cache.user.id, socket.id, cache.presence);
@@ -35,8 +35,8 @@ export default async function authenticateEvent(data: Data, socket: Socket) {
       userId: cache.user.id,
     })
   }
-
-
+  
+  
 
 
   emitToUser(socket.id, ServerEvent.AUTHORIZED, {

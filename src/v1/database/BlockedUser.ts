@@ -1,16 +1,8 @@
-import prisma from "../../common/database";
-
-
+import BlockedUserModel from '../../models/BlockedUserModel';
 
 export async function checkBlocked(userId1: string, userId2: string) {
-  const isBlocked = await prisma.blockedUser.findFirst({
-    where: {
-      OR: [
-        {blockedId: userId1, blockerId: userId2},
-        {blockedId: userId2, blockerId: userId1},
-      ]
-    }
-  })
-  if (isBlocked) return true;
-  return false;
+  return BlockedUserModel.exists({$or: [
+    {blocked: userId1, blocker: userId2},
+    {blocked: userId2, blocker: userId1},
+  ]})
 }

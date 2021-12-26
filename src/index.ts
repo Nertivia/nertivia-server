@@ -4,6 +4,7 @@ import { router as routerV1 } from "./v1/app";
 import http from 'http';
 import { connectRedis } from "./common/redis";
 import { configureIoServer } from "./common/socket";
+import { connect as connectMongoDB } from 'mongoose';
 
 const app = express();
 
@@ -24,6 +25,9 @@ app.all("*", (req, res) => {
 
 async function startServer() {
   await connectRedis();
+  await connectMongoDB(env.MONGODB_URL).then(() => {
+    console.log("Connected to MongoDB.")
+  })
   configureIoServer(server);
   server.listen(env.PORT, () => {
     console.log(`Listening on port *:${env.PORT}`);

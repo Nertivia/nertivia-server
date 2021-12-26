@@ -1,6 +1,8 @@
-import prisma from "../../common/database";
 import {getUser} from "./User";
 import { checkBlocked } from "./BlockedUser";
+import FriendModel from "../../models/FriendModel";
+import UserModel from "../../models/UserModel";
+import BlockedUserModel from "../../models/BlockedUserModel";
 
 export enum FriendshipStatus {
   Incoming = 0,
@@ -23,31 +25,28 @@ export async function addFriend(requesterId: string, recipientId: string) {
   }
   
   // check if already exists.
-  const existingFriend = await prisma.friend.findFirst({
-    where: {requesterId, recipientId},
-    select: {status: true}
-  })
+  const existingFriend = await FriendModel.findOne({requester: requesterId, recipient: recipientId}).select("status")
   if (existingFriend) {
     throw handleError(existingFriend.status)
   }
 
   // insert 
   const insertRequester = {
-    requesterId,
-    recipientId,
+    requester: requesterId,
+    recipient: recipientId,
     status: FriendshipStatus.Outgoing
   }
   const insertRecipient = {
-    recipientId: requesterId,
-    requesterId: recipientId,
+    recipient: requesterId,
+    requester: recipientId,
     status: FriendshipStatus.Incoming
   }
 
 
 
-  await prisma.friend.createMany({
-    data: [insertRequester, insertRecipient]
-  })
+
+  await FriendModel.insertMany([insertRequester, insertRecipient])
+
   return recipientUser
 }
 
@@ -58,10 +57,9 @@ export async function acceptFriend(acceptedId: string, recipientId: string) {
     throw { statusCode: 404, message:"Invalid recipient id."}
   }
 
-  const friendRequest = await prisma.friend.findFirst({
-    where: {requesterId: acceptedId, recipientId},
-    select: {status: true}
-  })
+
+
+  const friendRequest = await FriendModel.findOne({requesterId: acceptedId, recipient: recipientId}).select("status")
   if (!friendRequest) {
     throw { statusCode: 404, message:"Friend request does not exist."}
   }
@@ -69,33 +67,27 @@ export async function acceptFriend(acceptedId: string, recipientId: string) {
     throw { statusCode: 404, message:"Friend did not send a friend request."}
   }
 
+  
+  
+  await FriendModel.updateMany({$or:[
+    {recipient: recipientId, requester: acceptedId},
+    {recipient: acceptedId, requester: recipientId},
+  ]}, {status: FriendshipStatus.Friends})
+  
 
-  await prisma.friend.updateMany({
-    where: {
-      OR: [
-        {recipientId, requesterId: acceptedId},
-        {recipientId: acceptedId, requesterId: recipientId},
-      ]
-    },
-    data: {
-      status: FriendshipStatus.Friends
-    }
-  })
   return recipientUser;
 
 }
 
 export async function removeFriend(requesterId: string, recipientId: string) {
   // check if friends
-  const existingFriend = await prisma.friend.findFirst({
-    where: {requesterId, recipientId},
-    select: {status: true}
-  })
+  const existingFriend = await FriendModel.findOne({requester: requesterId, recipient: recipientId}).select("status")
 
   if (!existingFriend) {
     throw { statusCode: 404, message: "You are not friends with the recipient."}
   }
-  await prisma.friend.deleteMany({where: {AND: [{recipientId, requesterId}, {recipientId: requesterId, requesterId: recipientId}]}})
+
+  await FriendModel.deleteMany({$and: [{recipient: recipientId, requester: requesterId}, {recipient: requesterId, requester: recipientId}]})
 
   return true;
 
@@ -108,25 +100,23 @@ export async function blockUser(requesterId: string, recipientId: string) {
     throw { statusCode: 404, message: "Invalid recipient id."}
   }
   
-  const isAlreadyBlocked = await prisma.blockedUser.findFirst({where: {blockerId: requesterId}})
+  const isAlreadyBlocked = await BlockedUserModel.exists({blocker: requesterId})
+
   if (isAlreadyBlocked) {
     throw {statusCode: 400, message: "Already blocked."}
   }
 
-  const isFriends = await prisma.friend.findFirst({
-    where: {requesterId, recipientId},
-    select: {status: true}
+  const isFriends = await FriendModel.exists({requester: requesterId, recipient: recipientId})
+
+
+  await FriendModel.deleteMany({$and: [{recipient: recipientId, requester: requesterId}, {recipient: requesterId, requester: recipientId}]})
+
+  await BlockedUserModel.create({
+    blocker: requesterId,
+    blocked: recipientId
   })
 
-  await prisma.$transaction([
-    prisma.friend.deleteMany({where: {AND: [{recipientId, requesterId}, {recipientId: requesterId, requesterId: recipientId}]}}),
-    prisma.blockedUser.create({
-      data: {
-        blockerId: requesterId,
-        blockedId: recipientId
-      }
-    })
-  ])
+
 
   return {wereFriends: isFriends ? true : false};
 
@@ -140,9 +130,5 @@ function handleError(status: FriendshipStatus) {
 }
 
 export async function getFriends(userId: string) {
-
-  return prisma.friend.findMany({where: {requesterId: userId}, select: {
-    recipient: {select: {id: true, username: true, discriminator: true} },
-    status: true,
-  }})
+  return await FriendModel.find({requester: userId}, {_id: 0, status: 1}).populate("recipient", " -_id id username discriminator")
 }

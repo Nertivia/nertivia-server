@@ -1,11 +1,11 @@
-import database from "../../common/database";
 import { User } from "../interface/User";
+import UserModel from "../../models/UserModel";
 import FlakeId from "@brecert/flakeid";
 import bcrypt from "bcrypt";
 import { randomLetterNumber } from "../utils/random";
 import handlePostgresError from "./errorHandler";
-import prisma from "../../common/database";
 import { FriendshipStatus } from "./Friend";
+import FriendModel from "../../models/FriendModel";
 
 const flake = new FlakeId({
   mid: 42,
@@ -36,17 +36,14 @@ export async function createUser(details: CreateUser) {
   const hashPassword = await bcrypt.hash(details.password, 10);
   const id = flake.gen().toString();
 
-  return await prisma.user.create({
-    data: {
-      id,
-      email: details.email,
-      username: details.username,
-      discriminator: randomLetterNumber(4),
-      password: hashPassword,
-      passwordVersion: 0,
-      presence: Presence.ONLINE,
-    },
-    select: { id: true }
+  return UserModel.create({
+    _id: id,
+    email: details.email,
+    username: details.username,
+    discriminator: randomLetterNumber(4),
+    password: hashPassword,
+    passwordVersion: 0,
+    presence: Presence.ONLINE
   }).then(user => user.id)
   .catch(err => {
     if (err.code === "P2002") {
@@ -63,77 +60,44 @@ export async function createUser(details: CreateUser) {
 }
 
 export async function getUser(id: string) {
-  return prisma.user.findFirst(
-    {
-      where: {id},
-      select: {id: true, username: true, discriminator: true}
-    }).catch(err => {
-      throw {
-        statusCode: 500,
-        message: "Something went wrong when getting from the database.",
-        ...err
-      };
-    });
+  return UserModel.findOne({id}, {_id: 0, id: 1, username: 1, discriminator: 1})
 }
 export async function getUserAll(id: string) {
-  return prisma.user.findFirst({where: {id: id}}).catch(err => {
+  return UserModel.findOne({id})
+}
+export async function getUserByTag(username: string, discriminator: string) {
+  return UserModel.findOne({username, discriminator}, {_id: 0, id: 1, username: 1, discriminator: 1})
+}
+
+export async function authenticateUser(email: string, password: string) {
+  return UserModel.findOne({email}).select("username discriminator password id passwordVersion").then( async user => {
+    if (!user) {
+      throw { statusCode: 401, message: "Invalid email or password!" };
+    }
+    const verifyPassword = await bcrypt.compare(password, user.password);
+    if (!verifyPassword) {
+      throw { statusCode: 401, message: "Invalid email or password!" };
+    }
+    return user;
+  })
+  .catch(err => {
     throw {
       statusCode: 500,
-      message: "Something went wrong when inserting to the database.",
+      message: "Something went wrong when getting from the database.",
       ...err
     };
   });
 }
-export async function getUserByTag(username: string, discriminator: string) {
-  return prisma.user.findFirst(
-    {
-      where: {username, discriminator},
-      select: {id: true, username: true, discriminator: true}
-    }).catch(err => {
-      throw {
-        statusCode: 500,
-        message: "Something went wrong when getting from the database.",
-        ...err
-      };
-    });
-}
-
-export async function authenticateUser(email: string, password: string) {
-
-  return prisma.user.findFirst(
-    {
-      where: {email},
-      select: {username: true, discriminator: true, password: true, id: true, passwordVersion: true}
-    })
-    .then(async user => {
-      if (!user) {
-        throw { statusCode: 401, message: "Invalid email or password!" };
-      }
-      const verifyPassword = await bcrypt.compare(password, user.password);
-      if (!verifyPassword) {
-        throw { statusCode: 401, message: "Invalid email or password!" };
-      }
-      return user;
-    })    
-    .catch(err => {
-      throw {
-        statusCode: 500,
-        message: "Something went wrong when getting from the database.",
-        ...err
-      };
-    });
-}
 
 export async function updatePresence(id: string, presence: Presence) {
-  return prisma.user.update({where: {id}, data: {presence}})
+  return UserModel.updateOne({id}, {$set: {presence}})
 }
 
 export async function getFriendAndGuildIds(userId: string) {
-  const friends = await prisma.friend.findMany({
-    where: {requesterId: userId, status: FriendshipStatus.Friends},
-    select: {recipientId: true}
-  })
-  const friendIds = friends.map(friend => friend.recipientId);
+  const friends = await FriendModel.find({requester: userId, status: FriendshipStatus.Friends}).select("recipient")
+  
+
+  const friendIds = friends.map(friend => friend.recipient) as string[];
   // TODO: get guild ids
   const guildIds: string[] = [];
   return [...friendIds, ...guildIds];
