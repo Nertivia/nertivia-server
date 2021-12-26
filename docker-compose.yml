@@ -18,16 +18,16 @@ services:
         ports:
             - '80:80'
     postgres:
-        image: postgres:14.1
+        image: mongo:5.0.5
         restart: always
         ports:
             # <Port exposed> : < Port inside container>
-            - '5432:5432'
+            - '27107:27107'
         expose:
             # Opens port 5433 on the container
-            - '5432'
+            - '27107'
         volumes:
-            - database-data:/var/lib/postgresql/data/
+            - database-data:/var/lib/mongodb/data/
         env_file:
             - .env
         networks:

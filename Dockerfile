@@ -17,8 +17,6 @@ COPY . .
 
 RUN npm run build
 
-RUN npm run prisma:deploy
-RUN npx prisma generate
 RUN npm rebuild bcrypt --build-from-source
 
 # get rid of development modules used for compiling the typescript build files
