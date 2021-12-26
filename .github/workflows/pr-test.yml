@@ -18,20 +18,9 @@ jobs:
     
     services:
       # Label used to access the service container
-      postgres:
+      mongo:
         # Docker Hub image
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: test123
-          POSTGRES_USER: nertivia
-          POSTGRES_DB: nertivia
-          POSTGRES_PORT: 5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        image: mongo
       redis:
         # Docker Hub image
         image: redis
@@ -46,29 +35,10 @@ jobs:
           
       - run: npm ci
       - run: npm run build
-      - run: npm run prisma:deploy
-        env:
-          POSTGRES_URL: "postgresql://nertivia:test123@postgres:5432/nertivia"
-          POSTGRES_DB: nertivia
-          POSTGRES_USER: nertivia
-          POSTGRES_PASSWORD: test123
-          POSTGRES_HOST: postgres
-          POSTGRES_PORT: 5432
-
-          REDIS_HOST: redis
-          REDIS_PORT: 6379
-          JWT_SECRET: "change me"
-          PORT: 80
-        
         
       - run: npm test
         env:
-          POSTGRES_URL: "postgresql://nertivia:test123@postgres:5432/nertivia"
-          POSTGRES_DB: nertivia
-          POSTGRES_USER: nertivia
-          POSTGRES_PASSWORD: test123
-          POSTGRES_HOST: postgres
-          POSTGRES_PORT: 5432
+          MONGODB_URL: "mongodb://mongo:27017/Nertivia"
 
           REDIS_HOST: redis
           REDIS_PORT: 6379
