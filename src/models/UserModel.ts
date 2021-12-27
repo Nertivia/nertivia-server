@@ -18,7 +18,7 @@ export interface User {
 
 const schema = new Schema<User>({
   _id: { type : String },
-  id: { type : String, required : true},
+  id: { type : String, unique: true, required : true},
 
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true },

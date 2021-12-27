@@ -14,7 +14,7 @@ export interface Message {
 
 const schema = new Schema<Message>({
   _id: { type : String },
-  id: { type : String, required : true},
+  id: { type : String, unique: true, required : true},
 
   content: String,
   channel: { type: 'String', ref: 'channel' },
