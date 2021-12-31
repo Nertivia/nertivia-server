@@ -8,7 +8,7 @@ import { ValidateData } from "../../utils/ValidateData";
 interface ResponseBody {
   id?: string;
   username?: string;
-  discriminator?: string;
+  tag?: string;
 }
 
 export const blockUser = async (req: Request, res: Response) => {
@@ -18,14 +18,14 @@ export const blockUser = async (req: Request, res: Response) => {
   const errors = new ValidateData(req.body)
   .string("id", {min: 3, max: 100})
   .string("username", {min: 3, max: 100})
-  .string("discriminator", {min: 4, max: 4})
+  .string("tag", {min: 4, max: 4})
   .done(res)
 
   if (errors) return;
 
 
-  if (body.username && body.discriminator) {
-    const user = await getUserByTag(body.username, body.discriminator);
+  if (body.username && body.tag) {
+    const user = await getUserByTag(body.username, body.tag);
     if (user) body.id = user.id;
   }
   if (!body.id) {

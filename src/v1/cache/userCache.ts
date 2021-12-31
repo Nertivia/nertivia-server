@@ -14,7 +14,7 @@ export function constructCachedUser(user: Partial<User>) : CacheUser {
   return {
     user: {
       id: user.id,
-      discriminator: user.discriminator,
+      tag: user.tag,
       username: user.username,
     },
     passwordVersion: user.passwordVersion,

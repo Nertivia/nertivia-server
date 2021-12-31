@@ -5,7 +5,7 @@ export interface User {
   id: string
 
   username: string;
-  discriminator: string
+  tag: string
   email: string;
   password: string;
   passwordVersion: number;
@@ -24,7 +24,7 @@ const schema = new Schema<User>({
   username: { type: String, required: true },
   password: { type: String, required: true },
   passwordVersion: { type: Number, required: true },
-  discriminator: { type: String, required: true },
+  tag: { type: String, required: true },
   
   avatar: String,
   presence: Number,

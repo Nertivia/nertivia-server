@@ -40,7 +40,7 @@ export async function createUser(details: CreateUser) {
     id: id,
     email: details.email,
     username: details.username,
-    discriminator: randomLetterNumber(4),
+    tag: randomLetterNumber(4),
     password: hashPassword,
     passwordVersion: 0,
     presence: Presence.ONLINE
@@ -60,17 +60,17 @@ export async function createUser(details: CreateUser) {
 }
 
 export async function getUser(id: string) {
-  return UserModel.findOne({id}, {_id: 0, id: 1, username: 1, discriminator: 1})
+  return UserModel.findOne({id}, {_id: 0, id: 1, username: 1, tag: 1})
 }
 export async function getUserAll(id: string) {
   return UserModel.findOne({id})
 }
-export async function getUserByTag(username: string, discriminator: string) {
-  return UserModel.findOne({username, discriminator}, {_id: 0, id: 1, username: 1, discriminator: 1})
+export async function getUserByTag(username: string, tag: string) {
+  return UserModel.findOne({username, tag}, {_id: 0, id: 1, username: 1, tag: 1})
 }
 
 export async function authenticateUser(email: string, password: string) {
-  return UserModel.findOne({email}).select("username discriminator password id passwordVersion").then( async user => {
+  return UserModel.findOne({email}).select("username tag password id passwordVersion").then( async user => {
     if (!user) {
       throw { statusCode: 401, message: "Invalid email or password!" };
     }

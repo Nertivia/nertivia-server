@@ -130,5 +130,5 @@ function handleError(status: FriendshipStatus) {
 }
 
 export async function getFriends(userId: string) {
-  return await FriendModel.find({requester: userId}, {_id: 0, status: 1}).populate("recipient", " -_id id username discriminator")
+  return await FriendModel.find({requester: userId}, {_id: 0, status: 1}).populate("recipient", " -_id id username tag")
 }

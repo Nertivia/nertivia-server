@@ -35,7 +35,7 @@ export async function getOrCreateDMChannel(requesterId: string, recipientId: str
 }
 
 export async function getDMChannelById(channelId: string, requesterId: string) {
-  return ChannelModel.findOne({id: channelId, participants: requesterId}).select("-_id id").populate<{participants: User[]}>('participants', '-_id id username discriminator');
+  return ChannelModel.findOne({id: channelId, participants: requesterId}).select("-_id id").populate<{participants: User[]}>('participants', '-_id id username tag');
 }
 
 
